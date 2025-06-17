@@ -27,6 +27,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { user } = useSelector(state => state.auth);
   const { entries, loading } = useSelector(state => state.journal);
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     dispatch(getJournalEntries());
@@ -164,11 +165,11 @@ const Dashboard = () => {
                       }}
                       onClick={() => navigate(`/journal/${entry._id}`)}
                     >
-                      {entry.photos[0] && (
+                      {entry.photos && entry.photos.length > 0 && entry.photos[0] && (
                         <Box
                           sx={{
                             height: 200,
-                            backgroundImage: `url(${entry.photos[0].url})`,
+                            backgroundImage: `url(${API_URL}${entry.photos[0].url})`,
                             backgroundSize: 'cover',
                             backgroundPosition: 'center'
                           }}

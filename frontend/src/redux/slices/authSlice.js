@@ -1,10 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
-const API_URL = (process.env.REACT_APP_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '') + '/api';
+import api from '../../utils/axios';
 
 // Get user from localStorage
-const user = JSON.parse(localStorage.getItem('user'));
+const user = JSON.parse(localStorage.getItem('user') || 'null');
 const token = localStorage.getItem('token');
 
 export const register = createAsyncThunk(
@@ -19,20 +17,8 @@ export const register = createAsyncThunk(
         pregnancyStartDate: userData.pregnancyStartDate.toISOString()
       };
 
-      console.log('Registering user with data:', { 
-        ...formattedData, 
-        password: '[REDACTED]',
-        confirmPassword: '[REDACTED]'
-      });
-      console.log('Request URL:', `${API_URL}/auth/register`);
-
-      const response = await axios.post(`${API_URL}/auth/register`, formattedData);
+      const response = await api.post('/auth/register', formattedData);
       
-      console.log('Registration response:', { 
-        ...response.data, 
-        token: '[REDACTED]' 
-      });
-
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -59,12 +45,7 @@ export const login = createAsyncThunk(
         password: userData.password
       };
       
-      console.log('Logging in user:', { ...loginData, password: '[REDACTED]' });
-      console.log('Request URL:', `${API_URL}/auth/login`);
-      
-      const response = await axios.post(`${API_URL}/auth/login`, loginData);
-      
-      console.log('Login response:', { ...response.data, token: '[REDACTED]' });
+      const response = await api.post('/auth/login', loginData);
       
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
@@ -86,18 +67,34 @@ export const updateProfile = createAsyncThunk(
   'auth/updateProfile',
   async (profileData, { getState, rejectWithValue }) => {
     try {
-      const { token } = getState().auth;
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const response = await axios.put(`${API_URL}/auth/profile`, profileData, config);
+      const response = await api.put('/auth/profile', profileData);
       localStorage.setItem('user', JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const checkAuth = createAsyncThunk(
+  'auth/checkAuth',
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = localStorage.getItem('token');
+      const user = JSON.parse(localStorage.getItem('user') || 'null');
+      
+      if (!token || !user) {
+        throw new Error('No token or user found');
+      }
+      
+      // Verify token by making a request to get user profile
+      const response = await api.get('/auth/user');
+      return response.data;
+    } catch (error) {
+      // Clear invalid auth data
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      return rejectWithValue({ message: 'Authentication failed' });
     }
   }
 );
@@ -129,6 +126,24 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Check Auth
+      .addCase(checkAuth.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+        state.token = localStorage.getItem('token');
+      })
+      .addCase(checkAuth.rejected, (state, action) => {
+        state.loading = false;
+        state.isAuthenticated = false;
+        state.token = null;
+        state.user = null;
+        state.error = action.payload?.message || 'Authentication failed';
+      })
       // Register
       .addCase(register.pending, (state) => {
         state.loading = true;

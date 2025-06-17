@@ -39,7 +39,7 @@ router.post('/', [
       bloodPressure,
       bloodSugar,
       temperature,
-      symptoms: symptoms ? symptoms.split(',').map(s => s.trim()) : [],
+      symptoms: Array.isArray(symptoms) ? symptoms : (symptoms ? symptoms.split(',').map(s => s.trim()) : []),
       notes
     });
 
@@ -123,7 +123,7 @@ router.put('/:id', auth, async (req, res) => {
     if (bloodPressure) healthMetricsFields.bloodPressure = bloodPressure;
     if (bloodSugar) healthMetricsFields.bloodSugar = bloodSugar;
     if (temperature) healthMetricsFields.temperature = temperature;
-    if (symptoms) healthMetricsFields.symptoms = symptoms.split(',').map(s => s.trim());
+    if (symptoms) healthMetricsFields.symptoms = Array.isArray(symptoms) ? symptoms : symptoms.split(',').map(s => s.trim());
     if (notes) healthMetricsFields.notes = notes;
 
     const updatedHealthMetrics = await HealthMetrics.findByIdAndUpdate(

@@ -23,6 +23,10 @@ const AppointmentSchema = new mongoose.Schema({
     required: true,
     enum: ['checkup', 'ultrasound', 'blood-test', 'vaccination', 'other']
   },
+  doctorName: {
+    type: String,
+    trim: true
+  },
   location: {
     name: {
       type: String

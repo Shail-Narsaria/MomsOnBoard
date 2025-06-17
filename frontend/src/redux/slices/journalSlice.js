@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../utils/axios';
 
 // Ensure the API URL always includes /api
 const API_URL = (process.env.REACT_APP_API_URL || 'http://localhost:5000/api').replace(/\/api$/, '') + '/api';
@@ -9,7 +9,7 @@ export const getJournalEntries = createAsyncThunk(
   'journal/getEntries',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${API_URL}/journal`);
+      const response = await api.get('/journal');
       return response.data;
     } catch (error) {
       console.error('Get entries error:', error);
@@ -22,15 +22,23 @@ export const createJournalEntry = createAsyncThunk(
   'journal/createEntry',
   async (formData, { rejectWithValue }) => {
     try {
-      console.log('Creating journal entry with URL:', `${API_URL}/journal`);
-      const response = await axios.post(`${API_URL}/journal`, formData, {
+      console.log('Creating journal entry with URL:', '/journal');
+      console.log('FormData contents:');
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+      
+      const response = await api.post('/journal', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+      console.log('Journal entry created successfully:', response.data);
       return response.data;
     } catch (error) {
       console.error('Create entry error:', error);
+      console.error('Error response:', error.response?.data);
+      console.error('Error status:', error.response?.status);
       return rejectWithValue(error.response?.data || { message: 'Failed to create journal entry' });
     }
   }
@@ -40,7 +48,7 @@ export const updateJournalEntry = createAsyncThunk(
   'journal/updateEntry',
   async ({ id, formData }, { rejectWithValue }) => {
     try {
-      const response = await axios.put(`${API_URL}/journal/${id}`, formData, {
+      const response = await api.put(`/journal/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -56,7 +64,7 @@ export const deleteJournalEntry = createAsyncThunk(
   'journal/deleteEntry',
   async (id, { rejectWithValue }) => {
     try {
-      await axios.delete(`${API_URL}/journal/${id}`);
+      await api.delete(`/journal/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response.data);

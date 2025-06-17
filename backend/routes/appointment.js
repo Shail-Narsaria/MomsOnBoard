@@ -22,7 +22,7 @@ router.post('/', [
   }
 
   try {
-    const { title, date, time, type, location, notes, reminder } = req.body;
+    const { title, date, time, type, doctorName, location, notes, reminder } = req.body;
 
     const appointment = new Appointment({
       user: req.user.id,
@@ -30,6 +30,7 @@ router.post('/', [
       date,
       time,
       type,
+      doctorName,
       location,
       notes,
       reminder
@@ -98,7 +99,7 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
-    const { title, date, time, type, location, notes, reminder, status } = req.body;
+    const { title, date, time, type, doctorName, location, notes, reminder, status } = req.body;
 
     // Build appointment object
     const appointmentFields = {};
@@ -106,6 +107,7 @@ router.put('/:id', auth, async (req, res) => {
     if (date) appointmentFields.date = date;
     if (time) appointmentFields.time = time;
     if (type) appointmentFields.type = type;
+    if (doctorName !== undefined) appointmentFields.doctorName = doctorName;
     if (location) appointmentFields.location = location;
     if (notes) appointmentFields.notes = notes;
     if (reminder !== undefined) appointmentFields.reminder = reminder;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -19,6 +19,8 @@ import {
   ListItem,
   ListItemText,
   ListItemSecondaryAction,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -31,45 +33,146 @@ import {
 } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { format } from 'date-fns';
-import { Line } from 'react-chartjs-2';
+import { 
+  getHealthMetrics, 
+  createHealthMetric, 
+  updateHealthMetric, 
+  deleteHealthMetric 
+} from '../redux/slices/healthMetricsSlice';
 
 const HealthMetrics = () => {
   const [open, setOpen] = useState(false);
   const [selectedMetric, setSelectedMetric] = useState(null);
+  const [formData, setFormData] = useState({
+    date: '',
+    weight: '',
+    systolicBP: '',
+    diastolicBP: '',
+    bloodSugar: '',
+    temperature: '',
+    symptoms: '',
+    notes: ''
+  });
+  const [error, setError] = useState('');
+
   const dispatch = useDispatch();
+  const { metrics, loading } = useSelector(state => state.healthMetrics);
+
+  // Sort metrics by date (newest first) to ensure proper display order
+  const sortedMetrics = metrics ? [...metrics].sort((a, b) => new Date(b.date) - new Date(a.date)) : [];
+
+  useEffect(() => {
+    dispatch(getHealthMetrics());
+  }, [dispatch]);
 
   const handleOpen = (metric = null) => {
-    setSelectedMetric(metric);
+    if (metric) {
+      setFormData({
+        date: format(new Date(metric.date), 'yyyy-MM-dd'),
+        weight: metric.weight || '',
+        systolicBP: metric.bloodPressure?.systolic || '',
+        diastolicBP: metric.bloodPressure?.diastolic || '',
+        bloodSugar: metric.bloodSugar || '',
+        temperature: metric.temperature || '',
+        symptoms: metric.symptoms?.join(', ') || '',
+        notes: metric.notes || ''
+      });
+      setSelectedMetric(metric);
+    } else {
+      setFormData({
+        date: format(new Date(), 'yyyy-MM-dd'),
+        weight: '',
+        systolicBP: '',
+        diastolicBP: '',
+        bloodSugar: '',
+        temperature: '',
+        symptoms: '',
+        notes: ''
+      });
+      setSelectedMetric(null);
+    }
     setOpen(true);
   };
 
   const handleClose = () => {
     setSelectedMetric(null);
     setOpen(false);
+    setError('');
   };
 
-  const handleSubmit = (event) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // TODO: Implement health metrics submission
-    handleClose();
+    
+    if (!formData.date || !formData.weight || !formData.systolicBP || !formData.diastolicBP) {
+      setError('Please fill in all required fields (Date, Weight, Blood Pressure)');
+      return;
+    }
+
+    const metricData = {
+      date: formData.date,
+      weight: parseFloat(formData.weight),
+      bloodPressure: {
+        systolic: parseInt(formData.systolicBP),
+        diastolic: parseInt(formData.diastolicBP)
+      },
+      bloodSugar: formData.bloodSugar ? parseFloat(formData.bloodSugar) : null,
+      temperature: formData.temperature ? parseFloat(formData.temperature) : null,
+      symptoms: formData.symptoms ? formData.symptoms.split(',').map(s => s.trim()).filter(s => s) : [],
+      notes: formData.notes
+    };
+
+    console.log('Submitting health metric:', metricData);
+
+    try {
+      if (selectedMetric) {
+        const result = await dispatch(updateHealthMetric({ id: selectedMetric._id, metricData })).unwrap();
+        console.log('Health metric updated:', result);
+      } else {
+        const result = await dispatch(createHealthMetric(metricData)).unwrap();
+        console.log('Health metric created:', result);
+      }
+      handleClose();
+    } catch (error) {
+      console.error('Health metric error:', error);
+      setError(error.message || 'Failed to save health metric');
+    }
   };
 
-  // Placeholder metrics data
-  const metrics = [
-    {
-      id: 1,
-      date: new Date(),
-      weight: 65,
-      bloodPressure: {
-        systolic: 120,
-        diastolic: 80,
-      },
-      bloodSugar: 95,
-      temperature: 36.8,
-      symptoms: ['Nausea', 'Fatigue'],
-      notes: 'Feeling better today',
-    },
-  ];
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this health metric?')) {
+      try {
+        await dispatch(deleteHealthMetric(id)).unwrap();
+      } catch (error) {
+        setError(error.message || 'Failed to delete health metric');
+      }
+    }
+  };
+
+  const getLatestMetric = (field) => {
+    if (sortedMetrics.length === 0) return 'No data';
+    const latest = sortedMetrics[0]; // Metrics are sorted by date descending
+    
+    switch (field) {
+      case 'weight':
+        return `${latest.weight} kg`;
+      case 'bloodPressure':
+        return `${latest.bloodPressure.systolic}/${latest.bloodPressure.diastolic} mmHg`;
+      case 'bloodSugar':
+        return latest.bloodSugar ? `${latest.bloodSugar} mg/dL` : 'No data';
+      case 'temperature':
+        return latest.temperature ? `${latest.temperature}°C` : 'No data';
+      default:
+        return 'No data';
+    }
+  };
 
   const MetricCard = ({ title, value, unit, icon: Icon }) => (
     <Card sx={{ height: '100%' }}>
@@ -82,9 +185,11 @@ const HealthMetrics = () => {
         </Box>
         <Typography variant="h4" component="p" gutterBottom>
           {value}
-          <Typography variant="caption" sx={{ ml: 1 }}>
-            {unit}
-          </Typography>
+          {unit && (
+            <Typography variant="caption" sx={{ ml: 1 }}>
+              {unit}
+            </Typography>
+          )}
         </Typography>
       </CardContent>
     </Card>
@@ -110,32 +215,28 @@ const HealthMetrics = () => {
         <Grid item xs={12} sm={6} md={3}>
           <MetricCard
             title="Weight"
-            value={65}
-            unit="kg"
+            value={getLatestMetric('weight')}
             icon={TrendingUp}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <MetricCard
             title="Blood Pressure"
-            value="120/80"
-            unit="mmHg"
+            value={getLatestMetric('bloodPressure')}
             icon={Favorite}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <MetricCard
             title="Blood Sugar"
-            value={95}
-            unit="mg/dL"
+            value={getLatestMetric('bloodSugar')}
             icon={LocalHospital}
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <MetricCard
             title="Temperature"
-            value={36.8}
-            unit="°C"
+            value={getLatestMetric('temperature')}
             icon={Thermostat}
           />
         </Grid>
@@ -147,24 +248,38 @@ const HealthMetrics = () => {
             <Typography variant="h6" gutterBottom>
               History
             </Typography>
-            <List>
-              {metrics.map((metric) => (
-                <ListItem key={metric.id} divider>
-                  <ListItemText
-                    primary={format(metric.date, 'MMMM d, yyyy')}
-                    secondary={`Weight: ${metric.weight}kg | BP: ${metric.bloodPressure.systolic}/${metric.bloodPressure.diastolic} | Sugar: ${metric.bloodSugar}mg/dL`}
-                  />
-                  <ListItemSecondaryAction>
-                    <IconButton onClick={() => handleOpen(metric)} size="small">
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton color="error" size="small">
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
-            </List>
+            {loading ? (
+              <Box sx={{ display: 'flex', justifyContent: 'center', p: 3 }}>
+                <CircularProgress />
+              </Box>
+            ) : sortedMetrics.length === 0 ? (
+              <Typography variant="body2" color="text.secondary">
+                No health metrics recorded yet. Add your first entry to get started.
+              </Typography>
+            ) : (
+              <List>
+                {sortedMetrics.map((metric) => (
+                  <ListItem key={metric._id} divider>
+                    <ListItemText
+                      primary={format(new Date(metric.date), 'MMMM d, yyyy')}
+                      secondary={`Weight: ${metric.weight}kg | BP: ${metric.bloodPressure.systolic}/${metric.bloodPressure.diastolic} | Sugar: ${metric.bloodSugar || 'N/A'}mg/dL`}
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton onClick={() => handleOpen(metric)} size="small">
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton 
+                        color="error" 
+                        size="small"
+                        onClick={() => handleDelete(metric._id)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            )}
           </Paper>
         </Grid>
         <Grid item xs={12} md={4}>
@@ -172,13 +287,19 @@ const HealthMetrics = () => {
             <Typography variant="h6" gutterBottom>
               Recent Symptoms
             </Typography>
-            <List dense>
-              {metrics[0]?.symptoms.map((symptom, index) => (
-                <ListItem key={index}>
-                  <ListItemText primary={symptom} />
-                </ListItem>
-              ))}
-            </List>
+            {sortedMetrics.length > 0 && sortedMetrics[0].symptoms.length > 0 ? (
+              <List dense>
+                {sortedMetrics[0].symptoms.map((symptom, index) => (
+                  <ListItem key={index}>
+                    <ListItemText primary={symptom} />
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                No symptoms recorded
+              </Typography>
+            )}
           </Paper>
         </Grid>
       </Grid>
@@ -190,58 +311,92 @@ const HealthMetrics = () => {
         </DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
+            {error && (
+              <Alert severity="error" sx={{ mb: 2 }}>
+                {error}
+              </Alert>
+            )}
             <TextField
+              name="date"
               type="date"
               label="Date"
+              value={formData.date}
+              onChange={handleChange}
               fullWidth
               required
               InputLabelProps={{ shrink: true }}
               sx={{ mb: 2 }}
             />
             <TextField
+              name="weight"
               type="number"
               label="Weight (kg)"
+              value={formData.weight}
+              onChange={handleChange}
               fullWidth
               required
+              inputProps={{ step: 0.1, min: 0 }}
               sx={{ mb: 2 }}
             />
             <Grid container spacing={2} sx={{ mb: 2 }}>
               <Grid item xs={6}>
                 <TextField
+                  name="systolicBP"
                   type="number"
                   label="Systolic BP"
+                  value={formData.systolicBP}
+                  onChange={handleChange}
                   fullWidth
                   required
+                  inputProps={{ min: 0 }}
                 />
               </Grid>
               <Grid item xs={6}>
                 <TextField
+                  name="diastolicBP"
                   type="number"
                   label="Diastolic BP"
+                  value={formData.diastolicBP}
+                  onChange={handleChange}
                   fullWidth
                   required
+                  inputProps={{ min: 0 }}
                 />
               </Grid>
             </Grid>
             <TextField
+              name="bloodSugar"
               type="number"
               label="Blood Sugar (mg/dL)"
+              value={formData.bloodSugar}
+              onChange={handleChange}
               fullWidth
+              inputProps={{ step: 0.1, min: 0 }}
               sx={{ mb: 2 }}
             />
             <TextField
+              name="temperature"
               type="number"
               label="Temperature (°C)"
+              value={formData.temperature}
+              onChange={handleChange}
               fullWidth
+              inputProps={{ step: 0.1, min: 0 }}
               sx={{ mb: 2 }}
             />
             <TextField
+              name="symptoms"
               label="Symptoms (comma-separated)"
+              value={formData.symptoms}
+              onChange={handleChange}
               fullWidth
               sx={{ mb: 2 }}
             />
             <TextField
+              name="notes"
               label="Notes"
+              value={formData.notes}
+              onChange={handleChange}
               multiline
               rows={4}
               fullWidth
@@ -249,8 +404,8 @@ const HealthMetrics = () => {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>
-            <Button type="submit" variant="contained">
-              {selectedMetric ? 'Save Changes' : 'Create Entry'}
+            <Button type="submit" variant="contained" disabled={loading}>
+              {loading ? <CircularProgress size={24} /> : (selectedMetric ? 'Save Changes' : 'Create Entry')}
             </Button>
           </DialogActions>
         </form>

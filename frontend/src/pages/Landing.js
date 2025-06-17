@@ -56,7 +56,7 @@ const Landing = () => {
       <HeroSection>
         <Container>
           <Typography variant="h2" component="h1" gutterBottom>
-            Welcome to MotherTrack
+            Welcome to MomsOnBoard
           </Typography>
           <Typography variant="h5" paragraph>
             Your personal companion throughout your pregnancy journey
@@ -120,7 +120,7 @@ const Landing = () => {
             Start Your Journey Today
           </Typography>
           <Typography variant="body1" color="text.secondary" paragraph>
-            Join thousands of mothers who trust MotherTrack to guide them through their pregnancy journey.
+            Join thousands of mothers who trust MomsOnBoard to guide them through their pregnancy journey.
           </Typography>
           <Button
             component={Link}

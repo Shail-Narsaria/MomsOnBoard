@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
 // Helper function to get auth config
 const getConfig = () => {
@@ -19,15 +19,22 @@ export const createJournalEntry = createAsyncThunk(
       const formData = new FormData();
       
       // Append text data
-      Object.keys(entryData).forEach(key => {
-        if (key === 'photos') {
-          entryData[key].forEach(photo => {
-            formData.append('photos', photo);
-          });
-        } else if (typeof entryData[key] === 'object') {
-          formData.append(key, JSON.stringify(entryData[key]));
-        } else {
-          formData.append(key, entryData[key]);
+      formData.append('title', entryData.get('title'));
+      formData.append('content', entryData.get('content'));
+      formData.append('mood', entryData.get('mood'));
+      formData.append('symptoms', entryData.get('symptoms'));
+      
+      // Append date if provided
+      const date = entryData.get('date');
+      if (date) {
+        formData.append('date', date);
+      }
+      
+      // Append photos
+      const photos = entryData.getAll('photos');
+      photos.forEach(photo => {
+        if (photo instanceof File) {
+          formData.append('photos', photo);
         }
       });
 
@@ -44,7 +51,7 @@ export const createJournalEntry = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || { message: 'Failed to create journal entry' });
     }
   }
 );
@@ -59,7 +66,7 @@ export const getJournalEntries = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || { message: 'Failed to fetch journal entries' });
     }
   }
 );
@@ -74,7 +81,7 @@ export const getJournalEntry = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || { message: 'Failed to fetch journal entry' });
     }
   }
 );
@@ -86,15 +93,22 @@ export const updateJournalEntry = createAsyncThunk(
       const formData = new FormData();
       
       // Append text data
-      Object.keys(entryData).forEach(key => {
-        if (key === 'photos') {
-          entryData[key].forEach(photo => {
-            formData.append('photos', photo);
-          });
-        } else if (typeof entryData[key] === 'object') {
-          formData.append(key, JSON.stringify(entryData[key]));
-        } else {
-          formData.append(key, entryData[key]);
+      formData.append('title', entryData.get('title'));
+      formData.append('content', entryData.get('content'));
+      formData.append('mood', entryData.get('mood'));
+      formData.append('symptoms', entryData.get('symptoms'));
+      
+      // Append date if provided
+      const date = entryData.get('date');
+      if (date) {
+        formData.append('date', date);
+      }
+      
+      // Append photos
+      const photos = entryData.getAll('photos');
+      photos.forEach(photo => {
+        if (photo instanceof File) {
+          formData.append('photos', photo);
         }
       });
 
@@ -111,7 +125,7 @@ export const updateJournalEntry = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || { message: 'Failed to update journal entry' });
     }
   }
 );
@@ -126,7 +140,7 @@ export const deleteJournalEntry = createAsyncThunk(
       );
       return entryId;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || { message: 'Failed to delete journal entry' });
     }
   }
 );

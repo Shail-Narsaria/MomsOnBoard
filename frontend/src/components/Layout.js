@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   AppBar,
@@ -26,9 +26,13 @@ import {
   LocalHospital,
   AccountCircle,
   ExitToApp,
+  Brightness4,
+  Brightness7,
+  MonitorHeart,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
+import { ThemeContext } from '../context/ThemeContext';
 
 const Layout = ({ children }) => {
   const theme = useTheme();
@@ -37,6 +41,7 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { mode, toggleColorMode } = useContext(ThemeContext);
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -61,9 +66,10 @@ const Layout = ({ children }) => {
 
   const menuItems = [
     { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
+    { text: 'Health Metrics', icon: <LocalHospital />, path: '/health-metrics' },
+    { text: 'Advanced Health', icon: <MonitorHeart />, path: '/advanced-health' },
     { text: 'Journal', icon: <Book />, path: '/journal' },
     { text: 'Appointments', icon: <CalendarToday />, path: '/appointments' },
-    { text: 'Health Metrics', icon: <LocalHospital />, path: '/health-metrics' },
   ];
 
   const drawer = (
@@ -102,8 +108,8 @@ const Layout = ({ children }) => {
         position="fixed"
         sx={{
           zIndex: theme.zIndex.drawer + 1,
-          bgcolor: 'white',
-          color: 'primary.main',
+          bgcolor: 'background.paper',
+          color: 'text.primary',
           boxShadow: 1,
         }}
       >
@@ -130,7 +136,7 @@ const Layout = ({ children }) => {
               fontWeight: 'bold',
             }}
           >
-            MotherTrack
+            MomsOnBoard
           </Typography>
 
           {isAuthenticated ? (
@@ -156,6 +162,9 @@ const Layout = ({ children }) => {
                   ))}
                 </Box>
               )}
+              <IconButton onClick={toggleColorMode} color="inherit" sx={{ mr: 1 }}>
+                {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+              </IconButton>
               <IconButton onClick={handleMenuOpen} color="inherit">
                 <Avatar
                   sx={{
@@ -200,21 +209,24 @@ const Layout = ({ children }) => {
               </Menu>
             </>
           ) : (
-            <Box>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <IconButton onClick={toggleColorMode} color="inherit">
+                {mode === 'dark' ? <Brightness7 /> : <Brightness4 />}
+              </IconButton>
               <Button
-                color="inherit"
                 component={RouterLink}
                 to="/login"
+                color="inherit"
                 sx={{ mr: 1 }}
               >
                 Login
               </Button>
               <Button
-                variant="contained"
                 component={RouterLink}
                 to="/register"
+                variant="contained"
                 sx={{
-                  color: 'white',
+                  bgcolor: 'primary.main',
                   '&:hover': {
                     bgcolor: 'primary.dark',
                   },
@@ -227,18 +239,16 @@ const Layout = ({ children }) => {
         </Toolbar>
       </AppBar>
 
-      {isAuthenticated && (
+      {isAuthenticated && !isMobile && (
         <Drawer
-          variant={isMobile ? 'temporary' : 'permanent'}
-          open={isMobile ? mobileOpen : true}
-          onClose={handleDrawerToggle}
+          variant="permanent"
           sx={{
             width: 240,
             flexShrink: 0,
             '& .MuiDrawer-paper': {
               width: 240,
               boxSizing: 'border-box',
-              bgcolor: 'background.default',
+              bgcolor: 'background.paper',
               borderRight: '1px solid',
               borderColor: 'divider',
             },
@@ -249,16 +259,35 @@ const Layout = ({ children }) => {
         </Drawer>
       )}
 
+      {isAuthenticated && isMobile && (
+        <Drawer
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          ModalProps={{
+            keepMounted: true,
+          }}
+          sx={{
+            '& .MuiDrawer-paper': {
+              width: 240,
+              boxSizing: 'border-box',
+              bgcolor: 'background.paper',
+            },
+          }}
+        >
+          {drawer}
+        </Drawer>
+      )}
+
       <Box
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${240}px)` },
-          mt: '64px',
           bgcolor: 'background.default',
+          minHeight: '100vh',
         }}
       >
+        <Toolbar />
         {children}
       </Box>
     </Box>

@@ -4,6 +4,7 @@ import alertReducer from './slices/alertSlice';
 import journalReducer from './slices/journalSlice';
 import appointmentReducer from './slices/appointmentSlice';
 import healthMetricsReducer from './slices/healthMetricsSlice';
+import advancedHealthReducer from './slices/advancedHealthSlice';
 
 export const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ export const store = configureStore({
     journal: journalReducer,
     appointments: appointmentReducer,
     healthMetrics: healthMetricsReducer,
+    advancedHealth: advancedHealthReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

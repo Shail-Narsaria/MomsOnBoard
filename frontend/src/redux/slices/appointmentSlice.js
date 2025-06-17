@@ -1,78 +1,51 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import api from '../../utils/axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
-
-export const createAppointment = createAsyncThunk(
-  'appointments/create',
-  async (appointmentData, { getState, rejectWithValue }) => {
+// Async thunks
+export const getAppointments = createAsyncThunk(
+  'appointments/getAppointments',
+  async (_, { rejectWithValue }) => {
     try {
-      const { token } = getState().auth;
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const response = await axios.post(`${API_URL}/appointments`, appointmentData, config);
+      const response = await api.get('/appointments');
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || { message: 'Failed to fetch appointments' });
     }
   }
 );
 
-export const getAppointments = createAsyncThunk(
-  'appointments/getAll',
-  async (_, { getState, rejectWithValue }) => {
+export const createAppointment = createAsyncThunk(
+  'appointments/createAppointment',
+  async (appointmentData, { rejectWithValue }) => {
     try {
-      const { token } = getState().auth;
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const response = await axios.get(`${API_URL}/appointments`, config);
+      const response = await api.post('/appointments', appointmentData);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || { message: 'Failed to create appointment' });
     }
   }
 );
 
 export const updateAppointment = createAsyncThunk(
-  'appointments/update',
-  async ({ id, appointmentData }, { getState, rejectWithValue }) => {
+  'appointments/updateAppointment',
+  async ({ id, appointmentData }, { rejectWithValue }) => {
     try {
-      const { token } = getState().auth;
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      const response = await axios.put(`${API_URL}/appointments/${id}`, appointmentData, config);
+      const response = await api.put(`/appointments/${id}`, appointmentData);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || { message: 'Failed to update appointment' });
     }
   }
 );
 
 export const deleteAppointment = createAsyncThunk(
-  'appointments/delete',
-  async (id, { getState, rejectWithValue }) => {
+  'appointments/deleteAppointment',
+  async (id, { rejectWithValue }) => {
     try {
-      const { token } = getState().auth;
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      await axios.delete(`${API_URL}/appointments/${id}`, config);
+      await api.delete(`/appointments/${id}`);
       return id;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.response?.data || { message: 'Failed to delete appointment' });
     }
   }
 );
@@ -81,39 +54,19 @@ const initialState = {
   appointments: [],
   loading: false,
   error: null,
-  currentAppointment: null,
 };
 
 const appointmentSlice = createSlice({
   name: 'appointments',
   initialState,
   reducers: {
-    setCurrentAppointment: (state, action) => {
-      state.currentAppointment = action.payload;
-    },
-    clearCurrentAppointment: (state) => {
-      state.currentAppointment = null;
-    },
     clearError: (state) => {
       state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      // Create Appointment
-      .addCase(createAppointment.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(createAppointment.fulfilled, (state, action) => {
-        state.loading = false;
-        state.appointments.unshift(action.payload);
-      })
-      .addCase(createAppointment.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload?.message || 'Failed to create appointment';
-      })
-      // Get Appointments
+      // Get appointments
       .addCase(getAppointments.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -126,32 +79,43 @@ const appointmentSlice = createSlice({
         state.loading = false;
         state.error = action.payload?.message || 'Failed to fetch appointments';
       })
-      // Update Appointment
+      // Create appointment
+      .addCase(createAppointment.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(createAppointment.fulfilled, (state, action) => {
+        state.loading = false;
+        state.appointments.push(action.payload);
+      })
+      .addCase(createAppointment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload?.message || 'Failed to create appointment';
+      })
+      // Update appointment
       .addCase(updateAppointment.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(updateAppointment.fulfilled, (state, action) => {
         state.loading = false;
-        state.appointments = state.appointments.map((appointment) =>
-          appointment._id === action.payload._id ? action.payload : appointment
-        );
-        state.currentAppointment = null;
+        const index = state.appointments.findIndex(appointment => appointment._id === action.payload._id);
+        if (index !== -1) {
+          state.appointments[index] = action.payload;
+        }
       })
       .addCase(updateAppointment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload?.message || 'Failed to update appointment';
       })
-      // Delete Appointment
+      // Delete appointment
       .addCase(deleteAppointment.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(deleteAppointment.fulfilled, (state, action) => {
         state.loading = false;
-        state.appointments = state.appointments.filter(
-          (appointment) => appointment._id !== action.payload
-        );
+        state.appointments = state.appointments.filter(appointment => appointment._id !== action.payload);
       })
       .addCase(deleteAppointment.rejected, (state, action) => {
         state.loading = false;
@@ -160,5 +124,5 @@ const appointmentSlice = createSlice({
   },
 });
 
-export const { setCurrentAppointment, clearCurrentAppointment, clearError } = appointmentSlice.actions;
+export const { clearError } = appointmentSlice.actions;
 export default appointmentSlice.reducer; 

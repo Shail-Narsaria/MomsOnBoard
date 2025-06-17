@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const journalRoutes = require('./routes/journal');
 const appointmentRoutes = require('./routes/appointment');
 const healthMetricsRoutes = require('./routes/healthMetrics');
+const advancedHealthRoutes = require('./routes/advancedHealth');
 const testRoutes = require('./routes/test');
 
 const app = express();
@@ -46,6 +47,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/journal', journalRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/health-metrics', healthMetricsRoutes);
+app.use('/api/advanced-health', advancedHealthRoutes);
 app.use('/api/test', testRoutes);
 
 // Serve static files in production

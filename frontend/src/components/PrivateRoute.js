@@ -1,12 +1,16 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { CircularProgress, Box } from '@mui/material';
 
 const PrivateRoute = ({ children }) => {
-  const { isAuthenticated, loading } = useSelector(state => state.auth);
-  const location = useLocation();
+  const { isAuthenticated, loading, token } = useSelector((state) => state.auth);
+  
+  // Check both Redux state and localStorage for token
+  const localStorageToken = localStorage.getItem('token');
+  const isActuallyAuthenticated = isAuthenticated && (token || localStorageToken);
 
+  // Show loading spinner while checking authentication
   if (loading) {
     return (
       <Box
@@ -22,8 +26,8 @@ const PrivateRoute = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+  if (!isActuallyAuthenticated) {
+    return <Navigate to="/login" replace />;
   }
 
   return children;

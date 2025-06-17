@@ -1,142 +1,138 @@
-# MotherTrack - Pregnancy Journey Tracking Platform
+# MomsOnBoard - Pregnancy Journey Tracking Platform
 
-MotherTrack is a comprehensive web application designed to help pregnant women track their pregnancy journey, document their experiences, and maintain important health information. The platform provides a user-friendly interface for journaling, photo uploads, and health metric tracking.
+MomsOnBoard is a comprehensive web application designed to help pregnant women track their pregnancy journey, document their experiences, and maintain important health information. The platform provides a user-friendly interface for managing appointments, recording health metrics, and maintaining a digital pregnancy journal.
 
 ## Features
 
 - **User Authentication**: Secure registration and login system
-- **Pregnancy Journey Tracking**: Document your pregnancy journey week by week
-- **Journal Entries**: Create detailed entries with photos, moods, and symptoms
-- **Health Metrics**: Track important health data like weight, blood pressure, and more
-- **Baby Movement Tracking**: Monitor baby movements and kicks
-- **Photo Gallery**: Upload and organize pregnancy photos
-- **Medical Information**: Store important medical history and healthcare provider details
-- **Emergency Contacts**: Keep emergency contact information readily available
+- **Dashboard**: Overview of pregnancy progress and important dates
+- **Health Metrics Tracking**: Record and monitor vital signs, weight, blood pressure, and other health indicators
+- **Digital Journal**: Document pregnancy experiences, symptoms, and memories with photo uploads
+- **Appointment Management**: Schedule and track medical appointments
+- **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 
-## Tech Stack
+## Technology Stack
+
+### Frontend
+- React.js
+- Material-UI (MUI)
+- Redux Toolkit for state management
+- React Router for navigation
+- Axios for API communication
 
 ### Backend
 - Node.js
 - Express.js
-- MongoDB
-- JWT Authentication
-- Cloudinary (for image storage)
-
-### Frontend
-- React.js
-- Material-UI
-- Redux Toolkit
-- Formik & Yup
-- React Router
-- Axios
-
-## Prerequisites
-
-- Node.js (v14 or higher)
-- MongoDB
-- npm or yarn
-- Cloudinary account
+- MongoDB with Mongoose
+- JWT for authentication
+- Multer for file uploads
+- Express-validator for input validation
 
 ## Installation
 
-1. Clone the repository
+### Prerequisites
+- Node.js (v14 or higher)
+- MongoDB
+- npm or yarn
+
+### Setup Instructions
+
+1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/mothertrack.git
-cd mothertrack
+git clone https://github.com/yourusername/momsonboard.git
+cd momsonboard
 ```
 
-2. Install backend dependencies
+2. Install dependencies for both frontend and backend:
 ```bash
+# Install backend dependencies
 cd backend
 npm install
-```
 
-3. Create a .env file in the backend directory with the following variables:
-```
-MONGODB_URI=your_mongodb_uri
-JWT_SECRET=your_jwt_secret
-PORT=5000
-CLOUDINARY_CLOUD_NAME=your_cloudinary_name
-CLOUDINARY_API_KEY=your_cloudinary_key
-CLOUDINARY_API_SECRET=your_cloudinary_secret
-```
-
-4. Install frontend dependencies
-```bash
+# Install frontend dependencies
 cd ../frontend
 npm install
 ```
 
-5. Create a .env file in the frontend directory:
-```
-REACT_APP_API_URL=http://localhost:5000
-```
+3. Set up environment variables:
+   - Create a `.env` file in the backend directory
+   - Add the following variables:
+   ```
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   PORT=5000
+   ```
 
-## Running the Application
-
-1. Start the backend server
+4. Start the development servers:
 ```bash
-cd backend
+# Start backend server (from backend directory)
 npm run dev
-```
 
-2. Start the frontend development server
-```bash
-cd frontend
+# Start frontend server (from frontend directory, in a new terminal)
 npm start
 ```
 
-The application will be available at `http://localhost:3000`
+The application will be available at:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:5000
 
 ## Project Structure
 
 ```
-mothertrack/
+momsonboard/
 ├── backend/
-│   ├── models/
-│   │   ├── User.js
-│   │   └── Journal.js
-│   ├── routes/
-│   │   ├── auth.js
-│   │   └── journal.js
-│   ├── middleware/
-│   │   └── auth.js
-│   ├── package.json
-│   └── server.js
-└── frontend/
-    ├── public/
-    ├── src/
-    │   ├── components/
-    │   ├── pages/
-    │   ├── store/
-    │   │   └── slices/
-    │   ├── App.js
-    │   └── index.js
-    └── package.json
+│   ├── models/          # MongoDB schemas
+│   ├── routes/          # API endpoints
+│   ├── middleware/      # Authentication middleware
+│   ├── uploads/         # File upload directory
+│   └── server.js        # Main server file
+├── frontend/
+│   ├── src/
+│   │   ├── components/  # Reusable UI components
+│   │   ├── pages/       # Page components
+│   │   ├── redux/       # State management
+│   │   └── utils/       # Utility functions
+│   └── public/          # Static assets
+└── README.md
 ```
 
 ## API Endpoints
 
 ### Authentication
-- POST `/api/auth/register` - Register a new user
-- POST `/api/auth/login` - User login
-- GET `/api/auth/user` - Get user profile
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
 
-### Journal Entries
-- GET `/api/journal` - Get all journal entries
-- GET `/api/journal/:id` - Get specific journal entry
-- POST `/api/journal` - Create new journal entry
-- PUT `/api/journal/:id` - Update journal entry
-- DELETE `/api/journal/:id` - Delete journal entry
+### Health Metrics
+- `GET /api/health-metrics` - Get user's health metrics
+- `POST /api/health-metrics` - Create new health metric
+- `PUT /api/health-metrics/:id` - Update health metric
+- `DELETE /api/health-metrics/:id` - Delete health metric
+
+### Journal
+- `GET /api/journal` - Get user's journal entries
+- `POST /api/journal` - Create new journal entry
+- `PUT /api/journal/:id` - Update journal entry
+- `DELETE /api/journal/:id` - Delete journal entry
+
+### Appointments
+- `GET /api/appointments` - Get user's appointments
+- `POST /api/appointments` - Create new appointment
+- `PUT /api/appointments/:id` - Update appointment
+- `DELETE /api/appointments/:id` - Delete appointment
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## Support
 
-For support, please email support@mothertrack.com or create an issue in the GitHub repository. 
+For support, please email support@momsonboard.com or create an issue in the GitHub repository. 

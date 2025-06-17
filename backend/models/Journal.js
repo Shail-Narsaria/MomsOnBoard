@@ -15,28 +15,25 @@ const journalSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    mood: {
-        type: String,
-        enum: ['Happy', 'Excited', 'Tired', 'Anxious', 'Uncomfortable', 'Other'],
-        required: true
-    },
     symptoms: {
         type: [String],
         default: []
     },
-    week: {
-        type: Number,
-        required: true,
-        min: 1,
-        max: 42
-    },
     date: {
         type: Date,
+        required: true,
         default: Date.now
     },
-    image: {
-        type: String
-    }
+    photos: [{
+        url: {
+            type: String,
+            required: true
+        },
+        filename: {
+            type: String,
+            required: true
+        }
+    }]
 }, {
     timestamps: true
 });

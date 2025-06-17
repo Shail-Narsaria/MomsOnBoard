@@ -42,41 +42,76 @@ const upload = multer({
 const validateJournalEntry = [
   body('title').trim().notEmpty().withMessage('Title is required'),
   body('content').trim().notEmpty().withMessage('Content is required'),
-  body('mood').isIn(['Happy', 'Excited', 'Tired', 'Anxious', 'Uncomfortable', 'Other']).withMessage('Invalid mood'),
-  body('week').isInt({ min: 1, max: 42 }).withMessage('Week must be between 1 and 42'),
-  body('symptoms').optional().isArray().withMessage('Symptoms must be an array')
+  body('symptoms').optional().custom((value) => {
+    // Handle both string and array formats
+    if (typeof value === 'string') {
+      try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed);
+      } catch (e) {
+        return false;
+      }
+    }
+    return Array.isArray(value);
+  }).withMessage('Symptoms must be an array'),
+  body('date').optional().isISO8601().withMessage('Invalid date format')
 ];
 
 // @route   POST /api/journal
 // @desc    Create a new journal entry
 // @access  Private
-router.post('/', auth, upload.single('image'), validateJournalEntry, async (req, res) => {
+router.post('/', auth, upload.array('photos', 10), validateJournalEntry, async (req, res) => {
     try {
         // Check for validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            console.log('Validation errors:', errors.array());
             return res.status(400).json({ errors: errors.array() });
         }
 
-        const { title, content, mood, symptoms, week } = req.body;
-        const imagePath = req.file ? `/uploads/${req.file.filename}` : null;
+        console.log('Request body:', req.body);
+        console.log('Files uploaded:', req.files ? req.files.length : 0);
+
+        const { title, content, symptoms, date } = req.body;
+        
+        // Process uploaded photos
+        const photos = req.files ? req.files.map(file => ({
+            url: `/uploads/${file.filename}`,
+            filename: file.filename
+        })) : [];
 
         // Convert symptoms to array if it's a string
-        const symptomsArray = typeof symptoms === 'string' ? 
-            symptoms.split(',').map(s => s.trim()).filter(s => s) : 
-            (Array.isArray(symptoms) ? symptoms : []);
+        let symptomsArray = [];
+        if (typeof symptoms === 'string') {
+            try {
+                symptomsArray = JSON.parse(symptoms);
+            } catch (e) {
+                console.log('Error parsing symptoms:', e);
+                symptomsArray = [];
+            }
+        } else if (Array.isArray(symptoms)) {
+            symptomsArray = symptoms;
+        }
+
+        console.log('Processed data:', {
+            title,
+            content,
+            symptoms: symptomsArray,
+            date: date ? new Date(date) : new Date(),
+            photos: photos.length
+        });
 
         const journal = new Journal({
             user: req.user.id,
             title,
             content,
-            mood,
             symptoms: symptomsArray,
-            week: parseInt(week),
-            image: imagePath
+            date: date ? new Date(date) : new Date(),
+            photos
         });
 
         const savedEntry = await journal.save();
+        console.log('Journal entry saved successfully:', savedEntry._id);
         res.status(201).json(savedEntry);
     } catch (err) {
         console.error('Journal creation error:', err);
@@ -122,7 +157,7 @@ router.get('/:id', auth, async (req, res) => {
 // @route   PUT /api/journal/:id
 // @desc    Update a journal entry
 // @access  Private
-router.put('/:id', auth, upload.single('image'), validateJournalEntry, async (req, res) => {
+router.put('/:id', auth, upload.array('photos', 10), validateJournalEntry, async (req, res) => {
     try {
         // Check for validation errors
         const errors = validationResult(req);
@@ -136,28 +171,37 @@ router.put('/:id', auth, upload.single('image'), validateJournalEntry, async (re
             return res.status(404).json({ message: 'Entry not found' });
         }
 
-        // If there's a new image, delete the old one
-        if (req.file) {
-            if (entry.image) {
-                const oldImagePath = path.join(__dirname, '..', entry.image);
-                if (fs.existsSync(oldImagePath)) {
-                    fs.unlinkSync(oldImagePath);
-                }
-            }
-            entry.image = `/uploads/${req.file.filename}`;
+        // Process new photos if uploaded
+        let newPhotos = [];
+        if (req.files && req.files.length > 0) {
+            newPhotos = req.files.map(file => ({
+                url: `/uploads/${file.filename}`,
+                filename: file.filename
+            }));
         }
 
         // Convert symptoms to array if it's a string
         const symptomsArray = typeof req.body.symptoms === 'string' ? 
-            req.body.symptoms.split(',').map(s => s.trim()).filter(s => s) : 
+            JSON.parse(req.body.symptoms) : 
             (Array.isArray(req.body.symptoms) ? req.body.symptoms : entry.symptoms);
 
         // Update fields if provided
         if (req.body.title) entry.title = req.body.title;
         if (req.body.content) entry.content = req.body.content;
-        if (req.body.mood) entry.mood = req.body.mood;
         if (req.body.symptoms) entry.symptoms = symptomsArray;
-        if (req.body.week) entry.week = parseInt(req.body.week);
+        if (req.body.date) entry.date = new Date(req.body.date);
+        
+        // Update photos
+        if (newPhotos.length > 0) {
+            // Delete old photos
+            entry.photos.forEach(photo => {
+                const photoPath = path.join(__dirname, '..', photo.url);
+                if (fs.existsSync(photoPath)) {
+                    fs.unlinkSync(photoPath);
+                }
+            });
+            entry.photos = newPhotos;
+        }
 
         const updatedEntry = await entry.save();
         res.json(updatedEntry);
@@ -184,12 +228,14 @@ router.delete('/:id', auth, async (req, res) => {
             return res.status(404).json({ message: 'Entry not found' });
         }
 
-        // Delete associated image if it exists
-        if (entry.image) {
-            const imagePath = path.join(__dirname, '..', entry.image);
-            if (fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-            }
+        // Delete associated photos if they exist
+        if (entry.photos && entry.photos.length > 0) {
+            entry.photos.forEach(photo => {
+                const photoPath = path.join(__dirname, '..', photo.url);
+                if (fs.existsSync(photoPath)) {
+                    fs.unlinkSync(photoPath);
+                }
+            });
         }
 
         await entry.deleteOne();

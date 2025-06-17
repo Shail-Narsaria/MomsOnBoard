@@ -2,11 +2,16 @@ const jwt = require('jsonwebtoken');
 
 const auth = (req, res, next) => {
   // Get token from header
-  const token = req.header('x-auth-token');
+  let token = req.header('Authorization') || req.header('x-auth-token');
 
   // Check if no token
   if (!token) {
     return res.status(401).json({ message: 'No token, authorization denied' });
+  }
+
+  // Remove Bearer prefix if present
+  if (token.startsWith('Bearer ')) {
+    token = token.slice(7);
   }
 
   try {
@@ -17,6 +22,7 @@ const auth = (req, res, next) => {
     req.user = decoded.user;
     next();
   } catch (err) {
+    console.error('Token verification error:', err.message);
     res.status(401).json({ message: 'Token is not valid' });
   }
 };
