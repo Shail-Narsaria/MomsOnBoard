@@ -57,7 +57,7 @@ const MedicationTracker = ({ selectedDate }) => {
       setTaken(false);
       setNotes('');
     } catch (error) {
-      console.error('Failed to add medication entry:', error);
+      // Remove all console.error statements
     }
   };
 

@@ -6,7 +6,7 @@ export const getHealthMetrics = createAsyncThunk(
   'healthMetrics/getMetrics',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/health-metrics');
+      const response = await api.get('/api/health-metrics');
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: 'Failed to fetch health metrics' });
@@ -18,7 +18,7 @@ export const createHealthMetric = createAsyncThunk(
   'healthMetrics/createMetric',
   async (metricData, { rejectWithValue }) => {
     try {
-      const response = await api.post('/health-metrics', metricData);
+      const response = await api.post('/api/health-metrics', metricData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: 'Failed to create health metric' });
@@ -30,7 +30,7 @@ export const updateHealthMetric = createAsyncThunk(
   'healthMetrics/updateMetric',
   async ({ id, metricData }, { rejectWithValue }) => {
     try {
-      const response = await api.put(`/health-metrics/${id}`, metricData);
+      const response = await api.put(`/api/health-metrics/${id}`, metricData);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: 'Failed to update health metric' });
@@ -42,7 +42,7 @@ export const deleteHealthMetric = createAsyncThunk(
   'healthMetrics/deleteMetric',
   async (id, { rejectWithValue }) => {
     try {
-      await api.delete(`/health-metrics/${id}`);
+      await api.delete(`/api/health-metrics/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response?.data || { message: 'Failed to delete health metric' });

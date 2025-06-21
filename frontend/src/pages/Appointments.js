@@ -149,19 +149,14 @@ const Appointments = () => {
       notes: formData.notes
     };
 
-    console.log('Submitting appointment:', appointmentData);
-
     try {
       if (selectedAppointment) {
         const result = await dispatch(updateAppointment({ id: selectedAppointment._id, appointmentData })).unwrap();
-        console.log('Appointment updated:', result);
       } else {
         const result = await dispatch(createAppointment(appointmentData)).unwrap();
-        console.log('Appointment created:', result);
       }
       handleClose();
     } catch (error) {
-      console.error('Appointment error:', error);
       setError(error.message || 'Failed to save appointment');
     }
   };

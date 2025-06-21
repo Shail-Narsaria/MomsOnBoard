@@ -39,7 +39,6 @@ router.post('/', [
     await appointment.save();
     res.json(appointment);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
@@ -52,7 +51,6 @@ router.get('/', auth, async (req, res) => {
     const appointments = await Appointment.find({ user: req.user.id }).sort({ date: 1, time: 1 });
     res.json(appointments);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
@@ -75,7 +73,6 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json(appointment);
   } catch (err) {
-    console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Appointment not found' });
     }
@@ -121,7 +118,6 @@ router.put('/:id', auth, async (req, res) => {
 
     res.json(updatedAppointment);
   } catch (err) {
-    console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Appointment not found' });
     }
@@ -148,7 +144,6 @@ router.delete('/:id', auth, async (req, res) => {
     await appointment.deleteOne();
     res.json({ message: 'Appointment removed' });
   } catch (err) {
-    console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Appointment not found' });
     }

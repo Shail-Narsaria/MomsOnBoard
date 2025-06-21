@@ -129,19 +129,14 @@ const HealthMetrics = () => {
       notes: formData.notes
     };
 
-    console.log('Submitting health metric:', metricData);
-
     try {
       if (selectedMetric) {
         const result = await dispatch(updateHealthMetric({ id: selectedMetric._id, metricData })).unwrap();
-        console.log('Health metric updated:', result);
       } else {
         const result = await dispatch(createHealthMetric(metricData)).unwrap();
-        console.log('Health metric created:', result);
       }
       handleClose();
     } catch (error) {
-      console.error('Health metric error:', error);
       setError(error.message || 'Failed to save health metric');
     }
   };

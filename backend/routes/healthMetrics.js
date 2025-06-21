@@ -46,7 +46,6 @@ router.post('/', [
     await healthMetrics.save();
     res.json(healthMetrics);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
@@ -59,7 +58,6 @@ router.get('/', auth, async (req, res) => {
     const healthMetrics = await HealthMetrics.find({ user: req.user.id }).sort({ date: -1 });
     res.json(healthMetrics);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
@@ -82,7 +80,6 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json(healthMetrics);
   } catch (err) {
-    console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Health metrics entry not found' });
     }
@@ -134,7 +131,6 @@ router.put('/:id', auth, async (req, res) => {
 
     res.json(updatedHealthMetrics);
   } catch (err) {
-    console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Health metrics entry not found' });
     }
@@ -161,7 +157,6 @@ router.delete('/:id', auth, async (req, res) => {
     await healthMetrics.deleteOne();
     res.json({ message: 'Health metrics entry removed' });
   } catch (err) {
-    console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Health metrics entry not found' });
     }

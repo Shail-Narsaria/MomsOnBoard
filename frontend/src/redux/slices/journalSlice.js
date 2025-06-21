@@ -9,10 +9,9 @@ export const getJournalEntries = createAsyncThunk(
   'journal/getEntries',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await api.get('/journal');
+      const response = await api.get('/api/journal');
       return response.data;
     } catch (error) {
-      console.error('Get entries error:', error);
       return rejectWithValue(error.response?.data || { message: 'Failed to fetch journal entries' });
     }
   }
@@ -22,23 +21,13 @@ export const createJournalEntry = createAsyncThunk(
   'journal/createEntry',
   async (formData, { rejectWithValue }) => {
     try {
-      console.log('Creating journal entry with URL:', '/journal');
-      console.log('FormData contents:');
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
-      
-      const response = await api.post('/journal', formData, {
+      const response = await api.post('/api/journal', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log('Journal entry created successfully:', response.data);
       return response.data;
     } catch (error) {
-      console.error('Create entry error:', error);
-      console.error('Error response:', error.response?.data);
-      console.error('Error status:', error.response?.status);
       return rejectWithValue(error.response?.data || { message: 'Failed to create journal entry' });
     }
   }
@@ -48,7 +37,7 @@ export const updateJournalEntry = createAsyncThunk(
   'journal/updateEntry',
   async ({ id, formData }, { rejectWithValue }) => {
     try {
-      const response = await api.put(`/journal/${id}`, formData, {
+      const response = await api.put(`/api/journal/${id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -64,7 +53,7 @@ export const deleteJournalEntry = createAsyncThunk(
   'journal/deleteEntry',
   async (id, { rejectWithValue }) => {
     try {
-      await api.delete(`/journal/${id}`);
+      await api.delete(`/api/journal/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.response.data);

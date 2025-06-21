@@ -65,12 +65,8 @@ router.post('/', auth, upload.array('photos', 10), validateJournalEntry, async (
         // Check for validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            console.log('Validation errors:', errors.array());
             return res.status(400).json({ errors: errors.array() });
         }
-
-        console.log('Request body:', req.body);
-        console.log('Files uploaded:', req.files ? req.files.length : 0);
 
         const { title, content, symptoms, date } = req.body;
         
@@ -86,20 +82,11 @@ router.post('/', auth, upload.array('photos', 10), validateJournalEntry, async (
             try {
                 symptomsArray = JSON.parse(symptoms);
             } catch (e) {
-                console.log('Error parsing symptoms:', e);
                 symptomsArray = [];
             }
         } else if (Array.isArray(symptoms)) {
             symptomsArray = symptoms;
         }
-
-        console.log('Processed data:', {
-            title,
-            content,
-            symptoms: symptomsArray,
-            date: date ? new Date(date) : new Date(),
-            photos: photos.length
-        });
 
         const journal = new Journal({
             user: req.user.id,
@@ -111,10 +98,8 @@ router.post('/', auth, upload.array('photos', 10), validateJournalEntry, async (
         });
 
         const savedEntry = await journal.save();
-        console.log('Journal entry saved successfully:', savedEntry._id);
         res.status(201).json(savedEntry);
     } catch (err) {
-        console.error('Journal creation error:', err);
         if (err.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({ message: 'File size cannot exceed 10MB' });
         }
@@ -133,7 +118,6 @@ router.get('/', auth, async (req, res) => {
         const entries = await Journal.find({ user: req.user.id }).sort({ date: -1 });
         res.json(entries);
     } catch (err) {
-        console.error(err.message);
         res.status(500).json({ message: err.message });
     }
 });
@@ -149,7 +133,6 @@ router.get('/:id', auth, async (req, res) => {
         }
         res.json(entry);
     } catch (err) {
-        console.error(err.message);
         res.status(500).json({ message: err.message });
     }
 });
@@ -206,7 +189,6 @@ router.put('/:id', auth, upload.array('photos', 10), validateJournalEntry, async
         const updatedEntry = await entry.save();
         res.json(updatedEntry);
     } catch (err) {
-        console.error(err.message);
         if (err.code === 'LIMIT_FILE_SIZE') {
             return res.status(400).json({ message: 'File size cannot exceed 10MB' });
         }
@@ -241,7 +223,6 @@ router.delete('/:id', auth, async (req, res) => {
         await entry.deleteOne();
         res.json({ message: 'Entry deleted successfully' });
     } catch (err) {
-        console.error(err.message);
         res.status(500).json({ message: err.message });
     }
 });

@@ -239,26 +239,6 @@ const Layout = ({ children }) => {
         </Toolbar>
       </AppBar>
 
-      {isAuthenticated && !isMobile && (
-        <Drawer
-          variant="permanent"
-          sx={{
-            width: 240,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
-              width: 240,
-              boxSizing: 'border-box',
-              bgcolor: 'background.paper',
-              borderRight: '1px solid',
-              borderColor: 'divider',
-            },
-          }}
-        >
-          <Toolbar />
-          {drawer}
-        </Drawer>
-      )}
-
       {isAuthenticated && isMobile && (
         <Drawer
           variant="temporary"

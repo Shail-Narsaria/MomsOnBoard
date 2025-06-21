@@ -94,7 +94,7 @@ const ExerciseLogTracker = ({ selectedDate }) => {
       setSatisfaction(3);
       setNotes('');
     } catch (error) {
-      console.error('Failed to add exercise entry:', error);
+      // Remove all console.error statements
     }
   };
 

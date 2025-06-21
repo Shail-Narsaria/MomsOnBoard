@@ -47,7 +47,7 @@ const BabyMovementTracker = ({ selectedDate }) => {
       setNotes('');
       setTimeOfDay('morning');
     } catch (error) {
-      console.error('Failed to add baby movement entry:', error);
+      // Remove all console.error statements
     }
   };
 

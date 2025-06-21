@@ -53,7 +53,7 @@ const SleepQualityTracker = ({ selectedDate }) => {
       setBedTime('');
       setWakeTime('');
     } catch (error) {
-      console.error('Failed to add sleep entry:', error);
+      // Remove all console.error statements
     }
   };
 

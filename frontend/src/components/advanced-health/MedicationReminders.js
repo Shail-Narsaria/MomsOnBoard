@@ -53,7 +53,7 @@ const MedicationReminders = ({ selectedDate }) => {
       setTime('');
       setNotes('');
     } catch (error) {
-      console.error('Failed to add medication:', error);
+      // Remove all console.error statements
     }
   };
 
@@ -64,7 +64,7 @@ const MedicationReminders = ({ selectedDate }) => {
         entryData: { taken: !currentTaken }
       })).unwrap();
     } catch (error) {
-      console.error('Failed to update medication status:', error);
+      // Remove all console.error statements
     }
   };
 

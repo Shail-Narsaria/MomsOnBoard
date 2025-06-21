@@ -44,7 +44,7 @@ const ContractionTimer = ({ selectedDate }) => {
       setIntensity('moderate');
       setNotes('');
     } catch (error) {
-      console.error('Failed to add contraction entry:', error);
+      // Remove all console.error statements
     }
   };
 

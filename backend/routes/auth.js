@@ -21,16 +21,13 @@ router.post(
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        console.log('Registration validation errors:', errors.array());
         return res.status(400).json({ errors: errors.array() });
       }
 
       const { firstName, lastName, email, password, dueDate, pregnancyStartDate } = req.body;
-      console.log('Registration attempt for email:', email);
 
       let user = await User.findOne({ email });
       if (user) {
-        console.log('User already exists:', email);
         return res.status(400).json({ message: 'User already exists' });
       }
 
@@ -46,7 +43,6 @@ router.post(
 
       // Save user (password will be hashed by the pre-save hook)
       await user.save();
-      console.log('User registered successfully:', email);
 
       const payload = {
         user: {
@@ -60,7 +56,6 @@ router.post(
         { expiresIn: '7d' },
         (err, token) => {
           if (err) {
-            console.error('JWT sign error during registration:', err);
             throw err;
           }
           res.json({
@@ -77,7 +72,6 @@ router.post(
         }
       );
     } catch (err) {
-      console.error('Registration error:', err);
       res.status(500).json({ message: 'Server error during registration' });
     }
   }
@@ -95,27 +89,21 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('Validation errors:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
     const { email, password } = req.body;
-    console.log('Login attempt for email:', email);
 
     try {
       let user = await User.findOne({ email });
-      console.log('User found:', user ? 'Yes' : 'No');
 
       if (!user) {
-        console.log('No user found with email:', email);
         return res.status(400).json({ message: 'Invalid credentials' });
       }
 
       const isMatch = await user.comparePassword(password);
-      console.log('Password match:', isMatch ? 'Yes' : 'No');
 
       if (!isMatch) {
-        console.log('Password does not match for user:', email);
         return res.status(400).json({ message: 'Invalid credentials' });
       }
 
@@ -131,10 +119,8 @@ router.post(
         { expiresIn: '7d' },
         (err, token) => {
           if (err) {
-            console.error('JWT sign error:', err);
             throw err;
           }
-          console.log('Login successful for user:', email);
           res.json({
             token,
             user: {
@@ -151,7 +137,6 @@ router.post(
         }
       );
     } catch (err) {
-      console.error('Login error:', err);
       res.status(500).json({ message: 'Server error during login' });
     }
   }
@@ -165,7 +150,6 @@ router.get('/user', auth, async (req, res) => {
     const user = await User.findById(req.user.id).select('-password');
     res.json(user);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
@@ -198,7 +182,6 @@ router.put('/profile', auth, async (req, res) => {
     await user.save();
     res.json(user);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });

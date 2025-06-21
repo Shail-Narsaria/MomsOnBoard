@@ -156,14 +156,11 @@ const Journal = () => {
           id: selectedEntry._id,
           formData: formDataToSend
         })).unwrap();
-        console.log('Journal entry updated:', result);
       } else {
         const result = await dispatch(createJournalEntry(formDataToSend)).unwrap();
-        console.log('Journal entry created:', result);
       }
       handleClose();
     } catch (error) {
-      console.error('Failed to save journal entry:', error);
     }
   };
 
@@ -172,7 +169,6 @@ const Journal = () => {
       try {
         await dispatch(deleteJournalEntry(id)).unwrap();
       } catch (error) {
-        console.error('Failed to delete journal entry:', error);
       }
     }
   };

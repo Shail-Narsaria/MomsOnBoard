@@ -26,13 +26,12 @@ router.post('/', [
       user: req.user.id,
       type,
       date: new Date(date),
-      [type]: data
+      [type]: data[type] || data
     });
 
     await advancedHealth.save();
     res.json(advancedHealth);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
@@ -59,7 +58,6 @@ router.get('/', auth, async (req, res) => {
     const entries = await AdvancedHealth.find(query).sort({ date: -1 });
     res.json(entries);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });
@@ -77,7 +75,6 @@ router.get('/:id', auth, async (req, res) => {
 
     res.json(entry);
   } catch (err) {
-    console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Entry not found' });
     }
@@ -107,7 +104,6 @@ router.put('/:id', auth, async (req, res) => {
     await entry.save();
     res.json(entry);
   } catch (err) {
-    console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Entry not found' });
     }
@@ -129,7 +125,6 @@ router.delete('/:id', auth, async (req, res) => {
     await entry.deleteOne();
     res.json({ message: 'Entry removed' });
   } catch (err) {
-    console.error(err.message);
     if (err.kind === 'ObjectId') {
       return res.status(404).json({ message: 'Entry not found' });
     }
@@ -170,7 +165,6 @@ router.get('/stats/summary', auth, async (req, res) => {
 
     res.json(stats);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server Error');
   }
 });

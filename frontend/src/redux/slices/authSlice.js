@@ -25,11 +25,6 @@ export const register = createAsyncThunk(
       }
       return response.data;
     } catch (error) {
-      console.error('Registration error details:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message
-      });
       return rejectWithValue(error.response?.data || { message: 'Registration failed' });
     }
   }
@@ -53,11 +48,6 @@ export const login = createAsyncThunk(
       }
       return response.data;
     } catch (error) {
-      console.error('Login error details:', {
-        status: error.response?.status,
-        data: error.response?.data,
-        message: error.message
-      });
       return rejectWithValue(error.response?.data || { message: 'Login failed' });
     }
   }

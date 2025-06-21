@@ -36,14 +36,16 @@ const WaterIntakeTracker = ({ selectedDate }) => {
       await dispatch(createAdvancedHealthEntry({
         type: 'waterIntake',
         date: selectedDate,
-        amount,
-        type: beverageType,
-        notes
+        waterIntake: {
+          amount,
+          type: beverageType,
+          notes
+        }
       })).unwrap();
       setAmount(250);
       setNotes('');
     } catch (error) {
-      console.error('Failed to add water intake:', error);
+      // Remove all console.error statements
     }
   };
 
@@ -109,16 +111,22 @@ const WaterIntakeTracker = ({ selectedDate }) => {
           ) : (
             waterIntakeEntries.slice(0, 5).map((entry) => (
               <Box key={entry._id} sx={{ mb: 2, p: 1, border: '1px solid #eee', borderRadius: 1 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                  {entry.waterIntake.amount}ml, {entry.waterIntake.type}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                  {new Date(entry.date).toLocaleDateString()}
-                </Typography>
-                {entry.waterIntake.notes && (
-                  <Typography variant="body2" color="text.secondary">
-                    Notes: {entry.waterIntake.notes}
-                  </Typography>
+                {entry.waterIntake ? (
+                  <>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
+                      {entry.waterIntake.amount}ml, {entry.waterIntake.type}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {new Date(entry.date).toLocaleDateString()}
+                    </Typography>
+                    {entry.waterIntake.notes && (
+                      <Typography variant="body2" color="text.secondary">
+                        Notes: {entry.waterIntake.notes}
+                      </Typography>
+                    )}
+                  </>
+                ) : (
+                  <Typography color="error">Malformed entry</Typography>
                 )}
               </Box>
             ))
