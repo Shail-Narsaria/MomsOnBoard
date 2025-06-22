@@ -21,7 +21,6 @@ const ExerciseLog = ({ selectedDate }) => {
   const [exerciseType, setExerciseType] = useState('walking');
   const [duration, setDuration] = useState(30);
   const [intensity, setIntensity] = useState('moderate');
-  const [calories, setCalories] = useState(0);
   const [notes, setNotes] = useState('');
 
   const exerciseEntries = entries.filter(entry => entry.type === 'exercise');
@@ -49,11 +48,9 @@ const ExerciseLog = ({ selectedDate }) => {
         type: exerciseType,
         duration: parseInt(duration),
         intensity,
-        calories: parseInt(calories) || 0,
         notes
       })).unwrap();
       setDuration(30);
-      setCalories(0);
       setNotes('');
     } catch (error) {
       // Remove all console.error statements
@@ -109,16 +106,6 @@ const ExerciseLog = ({ selectedDate }) => {
             </Grid>
             <Grid item xs={12}>
               <TextField
-                label="Calories Burned (optional)"
-                type="number"
-                value={calories}
-                onChange={(e) => setCalories(e.target.value)}
-                min="0"
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
                 label="Notes"
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -149,7 +136,7 @@ const ExerciseLog = ({ selectedDate }) => {
             exerciseEntries.slice(0, 5).map((entry) => (
               <Box key={entry._id} sx={{ mb: 2, p: 1, border: '1px solid #eee', borderRadius: 1 }}>
                 <Typography variant="subtitle1" sx={{ fontWeight: 500 }}>
-                  {entry.exercise.duration} min, {entry.exercise.intensity}{entry.exercise.calories > 0 ? `, ${entry.exercise.calories} cal` : ''}
+                  {entry.exercise.duration} min, {entry.exercise.intensity}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
                   {new Date(entry.date).toLocaleDateString()} | {entry.exercise.type}
