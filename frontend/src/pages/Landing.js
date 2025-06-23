@@ -193,7 +193,7 @@ const FinalSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <Box sx={{ width: '100vw', height: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column', p: 0, m: 0 }}>
+    <Box sx={{ width: '100vw', minHeight: '60vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column', p: 0, m: 0 }}>
       {/* Top half: Quote */}
       <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
         <Container maxWidth="md">
@@ -220,29 +220,65 @@ const FinalSection = () => {
       {/* Space between quote and footer */}
       <Box sx={{ height: { xs: 16, md: 32 } }} />
       {/* Bottom half: Footer */}
-      <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', bgcolor: '#232526', color: 'white', width: '100vw', py: 3, px: 2, mt: 0 }}>
+      <Box sx={{ bgcolor: '#232526', color: 'white', width: '100vw', pt: 5, pb: 2, px: 2, mt: 0 }}>
         <Container maxWidth="lg">
-          <Divider sx={{ bgcolor: 'grey.700', mb: 2 }} />
-          <Grid container spacing={2} alignItems="center" justifyContent="space-between">
-            <Grid item xs={12} md={4} sx={{ textAlign: isMobile ? 'center' : 'left', mb: { xs: 1, md: 0 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'center' : 'flex-start', gap: 1 }}>
+          <Divider sx={{ bgcolor: 'grey.700', mb: 3 }} />
+          <Grid container spacing={4}>
+            {/* About */}
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>MomsOnBoard</Typography>
+              <Typography variant="body2" color="grey.300">
+                Empowering mothers with tools and community for a healthy, memorable pregnancy journey.
+              </Typography>
+            </Grid>
+            {/* Quick Links */}
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>Quick Links</Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                <Button color="inherit" component="a" href="#home" sx={{ justifyContent: 'flex-start', color: 'grey.200', textTransform: 'none', pl: 0 }}>Home</Button>
+                <Button color="inherit" component="a" href="#about" sx={{ justifyContent: 'flex-start', color: 'grey.200', textTransform: 'none', pl: 0 }}>About Us</Button>
+                <Button color="inherit" component={Link} to="/register" sx={{ justifyContent: 'flex-start', color: 'grey.200', textTransform: 'none', pl: 0 }}>Register</Button>
+                <Button color="inherit" component="a" href="#contact" sx={{ justifyContent: 'flex-start', color: 'grey.200', textTransform: 'none', pl: 0 }}>Contact</Button>
+              </Box>
+            </Grid>
+            {/* Resources */}
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>Resources</Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5 }}>
+                <Button color="inherit" component="a" href="#" sx={{ justifyContent: 'flex-start', color: 'grey.200', textTransform: 'none', pl: 0 }}>Blog</Button>
+                <Button color="inherit" component="a" href="#" sx={{ justifyContent: 'flex-start', color: 'grey.200', textTransform: 'none', pl: 0 }}>FAQs</Button>
+                <Button color="inherit" component="a" href="#" sx={{ justifyContent: 'flex-start', color: 'grey.200', textTransform: 'none', pl: 0 }}>Privacy Policy</Button>
+                <Button color="inherit" component="a" href="#" sx={{ justifyContent: 'flex-start', color: 'grey.200', textTransform: 'none', pl: 0 }}>Terms of Service</Button>
+              </Box>
+            </Grid>
+            {/* Contact & Social */}
+            <Grid item xs={12} sm={6} md={3}>
+              <Typography variant="h6" sx={{ fontWeight: 700, mb: 1 }}>Contact</Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <EmailIcon fontSize="small" sx={{ mr: 1, color: 'grey.300' }} />
                 <Typography variant="body2" sx={{ color: 'grey.200' }}>support@momsonboard.com</Typography>
               </Box>
-            </Grid>
-            <Grid item xs={12} md={4} sx={{ textAlign: 'center', mb: { xs: 1, md: 0 } }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <PhoneIcon fontSize="small" sx={{ mr: 1, color: 'grey.300' }} />
                 <Typography variant="body2" sx={{ color: 'grey.200' }}>+1 (555) 123-4567</Typography>
               </Box>
-            </Grid>
-            <Grid item xs={12} md={4} sx={{ textAlign: isMobile ? 'center' : 'right' }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: isMobile ? 'center' : 'flex-end', gap: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
                 <LocationOnIcon fontSize="small" sx={{ mr: 1, color: 'grey.300' }} />
-                <Typography variant="body2" sx={{ color: 'grey.200' }}>123 Motherhood Lane, Care City, Country</Typography>
+                <Typography variant="body2" sx={{ color: 'grey.200' }}>123 Motherhood Lane, Care City</Typography>
+              </Box>
+              {/* Social icons (placeholders) */}
+              <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+                <IconButton size="small" sx={{ color: 'grey.200' }} aria-label="Facebook"><span className="material-icons">facebook</span></IconButton>
+                <IconButton size="small" sx={{ color: 'grey.200' }} aria-label="Twitter"><span className="material-icons">twitter</span></IconButton>
+                <IconButton size="small" sx={{ color: 'grey.200' }} aria-label="Instagram"><span className="material-icons">instagram</span></IconButton>
               </Box>
             </Grid>
           </Grid>
+          {/* Bottom bar */}
+          <Divider sx={{ bgcolor: 'grey.800', my: 3 }} />
+          <Box sx={{ textAlign: 'center', color: 'grey.400', fontSize: 14 }}>
+            © {new Date().getFullYear()} MomsOnBoard. All rights reserved. | Made with ♥ for mothers everywhere.
+          </Box>
         </Container>
       </Box>
     </Box>
