@@ -1,0 +1,85 @@
+/* Dashboard Page Styles */
+
+.dashboard-container {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.pregnancy-progress-section {
+  margin-bottom: 32px;
+}
+
+.pregnancy-progress-bar {
+  height: 10px;
+  border-radius: 5px;
+  background: pink;
+}
+.pregnancy-progress-bar .MuiLinearProgress-bar {
+  background: #ff69b4;
+}
+
+.pregnancy-progress-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.pregnancy-progress-info .progress-label {
+  min-width: 35px;
+  color: #888;
+}
+
+.dashboard-metrics {
+  text-align: center;
+}
+
+.dashboard-metrics .MuiSvgIcon-root {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.recent-entries-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.recent-entry-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+.recent-entry-card:hover {
+  transform: translateY(-4px);
+}
+
+.recent-entry-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+}
+
+.recent-entry-content {
+  flex-grow: 1;
+}
+
+.recent-entry-title {
+  font-weight: 600;
+}
+
+.recent-entry-meta {
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.recent-entry-snippet {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  color: #666;
+} 

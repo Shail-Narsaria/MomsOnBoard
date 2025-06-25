@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { LockOutlined } from '@mui/icons-material';
 import { login, clearError } from '../store/slices/authSlice';
+import './Login.css';
 
 const validationSchema = Yup.object({
   email: Yup.string()

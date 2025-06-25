@@ -21,6 +21,7 @@ import {
 } from '@mui/icons-material';
 import { getJournalEntries } from '../store/slices/journalSlice';
 import { differenceInWeeks, format } from 'date-fns';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const dispatch = useDispatch();

@@ -1,0 +1,33 @@
+/* Appointments Page Styles */
+
+.appointments-container {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.appointments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.appointments-table-container {
+  margin-top: 24px;
+}
+
+.appointments-table th, .appointments-table td {
+  padding: 12px 8px;
+}
+
+.appointments-form {
+  margin-top: 24px;
+}
+
+.appointments-form-field {
+  margin-bottom: 16px;
+}
+
+.appointments-chip {
+  margin-right: 4px;
+} 

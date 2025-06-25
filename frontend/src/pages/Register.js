@@ -19,6 +19,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { PersonAdd } from '@mui/icons-material';
 import { register, clearError } from '../store/slices/authSlice';
 import { addDays, subWeeks } from 'date-fns';
+import './Register.css';
 
 const validationSchema = Yup.object({
   firstName: Yup.string()

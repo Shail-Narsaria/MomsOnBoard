@@ -1,0 +1,40 @@
+/* Profile Page Styles */
+
+.profile-container {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  width: 100px;
+  height: 100px;
+  background: #1976d2;
+  font-size: 2rem;
+  margin-right: 16px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-section {
+  margin-bottom: 32px;
+}
+
+.profile-form-field {
+  margin-bottom: 16px;
+}
+
+.profile-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+} 

@@ -51,6 +51,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths, startOfWeek, endOfWeek } from 'date-fns';
 import { createJournalEntry, getJournalEntries, updateJournalEntry, deleteJournalEntry } from '../redux/slices/journalSlice';
+import './Journal.css';
 
 const Journal = () => {
   const [open, setOpen] = useState(false);

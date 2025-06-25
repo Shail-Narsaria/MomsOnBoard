@@ -45,6 +45,7 @@ import WaterIntakeTracker from '../components/advanced-health/WaterIntakeTracker
 import SleepQualityTracker from '../components/advanced-health/SleepQualityTracker';
 import ExerciseLogTracker from '../components/advanced-health/ExerciseLogTracker';
 import MedicationTracker from '../components/advanced-health/MedicationTracker';
+import './AdvancedHealth.css';
 
 const AdvancedHealth = () => {
   const theme = useTheme();
@@ -59,82 +60,32 @@ const AdvancedHealth = () => {
   }, [dispatch, selectedDate]);
 
   const tabs = [
-    { 
-      id: 'babyMovement', 
-      label: 'Baby Movement', 
-      icon: <ChildCare />, 
-      color: theme.palette.mode === 'dark' ? '#fce7f3' : '#fdf2f8',
-      textColor: '#ec4899'
-    },
-    { 
-      id: 'contraction', 
-      label: 'Contractions', 
-      icon: <Timer />, 
-      color: theme.palette.mode === 'dark' ? '#fef2f2' : '#fef2f2',
-      textColor: '#ef4444'
-    },
-    { 
-      id: 'waterIntake', 
-      label: 'Water Intake', 
-      icon: <Opacity />, 
-      color: theme.palette.mode === 'dark' ? '#eff6ff' : '#eff6ff',
-      textColor: '#3b82f6'
-    },
-    { 
-      id: 'sleep', 
-      label: 'Sleep Quality', 
-      icon: <Bedtime />, 
-      color: theme.palette.mode === 'dark' ? '#f3e8ff' : '#f3e8ff',
-      textColor: '#8b5cf6'
-    },
-    { 
-      id: 'exercise', 
-      label: 'Exercise Log', 
-      icon: <FitnessCenter />, 
-      color: theme.palette.mode === 'dark' ? '#ecfdf5' : '#ecfdf5',
-      textColor: '#10b981'
-    },
-    { 
-      id: 'medication', 
-      label: 'Medications', 
-      icon: <Medication />, 
-      color: theme.palette.mode === 'dark' ? '#fff7ed' : '#fff7ed',
-      textColor: '#f97316'
-    }
+    { id: 'babyMovement', label: 'Baby Movement', icon: <ChildCare /> },
+    { id: 'contraction', label: 'Contractions', icon: <Timer /> },
+    { id: 'waterIntake', label: 'Water Intake', icon: <Opacity /> },
+    { id: 'sleep', label: 'Sleep Quality', icon: <Bedtime /> },
+    { id: 'exercise', label: 'Exercise Log', icon: <FitnessCenter /> },
+    { id: 'medication', label: 'Medications', icon: <Medication /> }
   ];
 
   const getTodayStats = () => {
-    const todayEntries = entries.filter(entry => 
-      new Date(entry.date).toDateString() === new Date().toDateString()
-    );
-    
+    const todayEntries = entries.filter(entry => new Date(entry.date).toDateString() === new Date().toDateString());
     return {
       totalEntries: todayEntries.length,
-      byType: tabs.reduce((acc, tab) => {
-        acc[tab.id] = todayEntries.filter(entry => entry.type === tab.id).length;
-        return acc;
-      }, {})
+      categoriesTracked: tabs.filter(tab => todayEntries.some(entry => entry.type === tab.id)).length
     };
   };
-
   const todayStats = getTodayStats();
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'babyMovement':
-        return <BabyMovementTracker selectedDate={selectedDate} />;
-      case 'contraction':
-        return <ContractionTimer selectedDate={selectedDate} />;
-      case 'waterIntake':
-        return <WaterIntakeTracker selectedDate={selectedDate} />;
-      case 'sleep':
-        return <SleepQualityTracker selectedDate={selectedDate} />;
-      case 'exercise':
-        return <ExerciseLogTracker selectedDate={selectedDate} />;
-      case 'medication':
-        return <MedicationTracker selectedDate={selectedDate} />;
-      default:
-        return <BabyMovementTracker selectedDate={selectedDate} />;
+      case 'babyMovement': return <BabyMovementTracker selectedDate={selectedDate} />;
+      case 'contraction': return <ContractionTimer selectedDate={selectedDate} />;
+      case 'waterIntake': return <WaterIntakeTracker selectedDate={selectedDate} />;
+      case 'sleep': return <SleepQualityTracker selectedDate={selectedDate} />;
+      case 'exercise': return <ExerciseLogTracker selectedDate={selectedDate} />;
+      case 'medication': return <MedicationTracker selectedDate={selectedDate} />;
+      default: return <BabyMovementTracker selectedDate={selectedDate} />;
     }
   };
 
@@ -143,210 +94,61 @@ const AdvancedHealth = () => {
   };
 
   return (
-    <Box sx={{ 
-      minHeight: '100vh', 
-      bgcolor: 'background.default',
-      py: 3
-    }}>
+    <Box className="advancedhealth-container">
       <Container maxWidth="xl">
-        {/* Header */}
-        <Box sx={{ mb: 4 }}>
-          <Typography variant="h3" component="h1" gutterBottom sx={{ 
-            fontWeight: 700,
-            color: 'text.primary',
-            textAlign: { xs: 'center', md: 'left' }
-          }}>
+        <Box className="advancedhealth-header">
+          <Typography variant="h3" component="h1" className="advancedhealth-title">
             Advanced Health Tracking
           </Typography>
-          <Typography variant="h6" color="text.secondary" sx={{ 
-            textAlign: { xs: 'center', md: 'left' },
-            mb: 3
-          }}>
+          <Typography variant="h6" color="text.secondary" className="advancedhealth-subtitle">
             Comprehensive tracking for your pregnancy journey
           </Typography>
-
-          {/* Date Selector */}
-          <Box sx={{ 
-            display: 'flex', 
-            justifyContent: { xs: 'center', md: 'flex-start' },
-            mb: 3
-          }}>
+          <Box className="advancedhealth-date-selector">
             <TextField
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               variant="outlined"
               size="small"
-              sx={{ minWidth: 200 }}
-              InputProps={{
-                sx: { borderRadius: 2 }
-              }}
             />
           </Box>
         </Box>
-
-        {/* Error Alert */}
-        {error && (
-          <Alert severity="error" sx={{ mb: 3 }}>
-            {error}
-          </Alert>
-        )}
-
-        {/* Statistics Cards */}
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ 
-              height: '100%',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              color: 'white'
-            }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <TrendingUp sx={{ mr: 1 }} />
-                  <Typography variant="h6">Today's Entries</Typography>
-                </Box>
-                <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                  {todayStats.totalEntries}
-                </Typography>
-                <LinearProgress 
-                  variant="determinate" 
-                  value={Math.min((todayStats.totalEntries / 10) * 100, 100)} 
-                  sx={{ 
-                    mt: 1, 
-                    bgcolor: 'rgba(255,255,255,0.3)',
-                    '& .MuiLinearProgress-bar': { bgcolor: 'white' }
-                  }} 
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ 
-              height: '100%',
-              background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-              color: 'white'
-            }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <CalendarToday sx={{ mr: 1 }} />
-                  <Typography variant="h6">Active Tracking</Typography>
-                </Box>
-                <Typography variant="h3" sx={{ fontWeight: 700 }}>
-                  {Object.values(todayStats.byType).filter(count => count > 0).length}
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  Categories tracked today
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ 
-              height: '100%',
-              background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-              color: 'white'
-            }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <AccessTime sx={{ mr: 1 }} />
-                  <Typography variant="h6">Last Updated</Typography>
-                </Box>
-                <Typography variant="h4" sx={{ fontWeight: 700 }}>
-                  {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  Real-time tracking
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} sm={6} md={3}>
-            <Card sx={{ 
-              height: '100%',
-              background: 'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-              color: 'white'
-            }}>
-              <CardContent>
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <FitnessCenter sx={{ mr: 1 }} />
-                  <Typography variant="h6">Most Active</Typography>
-                </Box>
-                <Typography variant="h5" sx={{ fontWeight: 700 }}>
-                  {Object.entries(todayStats.byType).reduce((a, b) => a[1] > b[1] ? a : b)[0] || 'None'}
-                </Typography>
-                <Typography variant="body2" sx={{ opacity: 0.8 }}>
-                  Top tracking category
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </Grid>
-
-        {/* Main Content */}
-        <Paper sx={{ 
-          borderRadius: 3,
-          overflow: 'hidden',
-          boxShadow: theme.shadows[8]
+        {error && <Alert severity="error">{error}</Alert>}
+        <Box className="advancedhealth-summary" style={{
+          display: 'flex',
+          gap: '2rem',
+          alignItems: 'center',
+          justifyContent: isMobile ? 'center' : 'flex-start',
+          marginBottom: '2rem',
+          background: theme.palette.background.paper,
+          borderRadius: 8,
+          padding: '1rem 2rem',
+          boxShadow: theme.shadows[1]
         }}>
-          {/* Tabs */}
-          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Typography variant="body1"><b>Today's Entries:</b> {todayStats.totalEntries}</Typography>
+          <Divider orientation="vertical" flexItem style={{ margin: '0 1rem' }} />
+          <Typography variant="body1"><b>Categories Tracked:</b> {todayStats.categoriesTracked}</Typography>
+        </Box>
+        <Paper className="advancedhealth-main">
+          <Box>
             <Tabs 
               value={activeTab} 
               onChange={handleTabChange}
               variant={isMobile ? "scrollable" : "fullWidth"}
               scrollButtons={isMobile ? "auto" : false}
-              sx={{
-                '& .MuiTab-root': {
-                  minHeight: 64,
-                  fontSize: '0.875rem',
-                  fontWeight: 600,
-                  textTransform: 'none'
-                },
-                '& .Mui-selected': {
-                  color: 'primary.main'
-                }
-              }}
             >
               {tabs.map((tab) => (
                 <Tab
                   key={tab.id}
                   value={tab.id}
-                  label={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      {tab.icon}
-                      <Typography variant="body2">{tab.label}</Typography>
-                      {todayStats.byType[tab.id] > 0 && (
-                        <Chip
-                          label={todayStats.byType[tab.id]}
-                          size="small"
-                          sx={{
-                            bgcolor: tab.color,
-                            color: tab.textColor,
-                            fontWeight: 600,
-                            minWidth: 20,
-                            height: 20
-                          }}
-                        />
-                      )}
-                    </Box>
-                  }
+                  label={<Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>{tab.icon}<span>{tab.label}</span></Box>}
                 />
               ))}
             </Tabs>
           </Box>
-
-          {/* Tab Content */}
-          <Box sx={{ p: { xs: 2, md: 4 } }}>
+          <Box style={{ padding: isMobile ? 16 : 32 }}>
             {loading ? (
-              <Box sx={{ 
-                display: 'flex', 
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                py: 8 
-              }}>
+              <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '4rem 0' }}>
                 <CircularProgress size={60} />
               </Box>
             ) : (

@@ -25,6 +25,7 @@ import {
   clearCurrentEntry
 } from '../store/slices/journalSlice';
 import { showAlert } from '../store/slices/alertSlice';
+import './JournalEntry.css';
 
 const moods = ['Happy', 'Excited', 'Tired', 'Anxious', 'Uncomfortable', 'Other'];
 

@@ -1,0 +1,33 @@
+/* Journal Entry Page Styles */
+
+.journalentry-container {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.journalentry-header {
+  margin-bottom: 24px;
+}
+
+.journalentry-form {
+  margin-top: 24px;
+}
+
+.journalentry-form-field {
+  margin-bottom: 16px;
+}
+
+.journalentry-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.journalentry-photo-preview {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-right: 8px;
+} 

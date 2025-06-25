@@ -1,0 +1,38 @@
+/* Advanced Health Page Styles */
+
+.advancedhealth-container {
+  min-height: 100vh;
+  background: #fafbfc;
+  padding-top: 24px;
+  padding-bottom: 24px;
+}
+
+.advancedhealth-header {
+  margin-bottom: 32px;
+}
+
+.advancedhealth-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.advancedhealth-subtitle {
+  color: #888;
+  margin-bottom: 24px;
+}
+
+.advancedhealth-date-selector {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 24px;
+}
+
+.advancedhealth-tabs {
+  margin-bottom: 32px;
+}
+
+.advancedhealth-stats-card {
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+} 

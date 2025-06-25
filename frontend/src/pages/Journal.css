@@ -1,0 +1,38 @@
+/* Journal Page Styles */
+
+.journal-container {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.journal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.journal-calendar {
+  margin-bottom: 32px;
+}
+
+.journal-timeline {
+  margin-bottom: 32px;
+}
+
+.journal-entry-card {
+  margin-bottom: 24px;
+}
+
+.journal-entry-title {
+  font-weight: 600;
+}
+
+.journal-entry-meta {
+  color: #888;
+  margin-bottom: 8px;
+}
+
+.journal-entry-content {
+  color: #666;
+} 

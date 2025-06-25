@@ -39,6 +39,7 @@ import {
   updateHealthMetric, 
   deleteHealthMetric 
 } from '../redux/slices/healthMetricsSlice';
+import './HealthMetrics.css';
 
 const HealthMetrics = () => {
   const [open, setOpen] = useState(false);

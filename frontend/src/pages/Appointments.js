@@ -36,6 +36,7 @@ import {
   updateAppointment, 
   deleteAppointment 
 } from '../redux/slices/appointmentSlice';
+import './Appointments.css';
 
 const Appointments = () => {
   const [open, setOpen] = useState(false);

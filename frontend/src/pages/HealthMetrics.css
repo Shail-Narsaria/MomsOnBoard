@@ -1,0 +1,51 @@
+/* Health Metrics Page Styles */
+
+.healthmetrics-container {
+  margin-top: 32px;
+  margin-bottom: 32px;
+}
+
+.healthmetrics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+}
+
+.healthmetrics-metric-card {
+  height: 100%;
+}
+
+.healthmetrics-metric-icon {
+  color: #1976d2;
+  margin-right: 8px;
+}
+
+.healthmetrics-metric-title {
+  font-weight: 600;
+}
+
+.healthmetrics-metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.healthmetrics-form {
+  margin-top: 24px;
+}
+
+.healthmetrics-form-field {
+  margin-bottom: 16px;
+}
+
+.healthmetrics-list {
+  margin-top: 32px;
+}
+
+.healthmetrics-list-item {
+  border-bottom: 1px solid #eee;
+}
+
+.healthmetrics-list-item:last-child {
+  border-bottom: none;
+} 

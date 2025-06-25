@@ -20,6 +20,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { updateProfile } from '../store/slices/authSlice';
 import { showAlert } from '../store/slices/alertSlice';
 import { format } from 'date-fns';
+import './Profile.css';
 
 const validationSchema = Yup.object({
   firstName: Yup.string()
