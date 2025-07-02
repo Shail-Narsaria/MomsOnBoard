@@ -44,7 +44,7 @@ const AppointmentSchema = new mongoose.Schema({
       default: true
     },
     time: {
-      type: Number, // minutes before appointment
+      type: Number,
       default: 60
     }
   },

@@ -4,9 +4,6 @@ const auth = require('../middleware/auth');
 const AdvancedHealth = require('../models/AdvancedHealth');
 const { check, validationResult } = require('express-validator');
 
-// @route   POST api/advanced-health
-// @desc    Create a new advanced health entry
-// @access  Private
 router.post('/', [
   auth,
   [
@@ -36,9 +33,7 @@ router.post('/', [
   }
 });
 
-// @route   GET api/advanced-health
-// @desc    Get all advanced health entries for a user
-// @access  Private
+
 router.get('/', auth, async (req, res) => {
   try {
     const { type, startDate, endDate } = req.query;
@@ -62,9 +57,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/advanced-health/:id
-// @desc    Get specific advanced health entry
-// @access  Private
+
 router.get('/:id', auth, async (req, res) => {
   try {
     const entry = await AdvancedHealth.findOne({ _id: req.params.id, user: req.user.id });
@@ -82,9 +75,6 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/advanced-health/:id
-// @desc    Update advanced health entry
-// @access  Private
 router.put('/:id', auth, async (req, res) => {
   try {
     const entry = await AdvancedHealth.findOne({ _id: req.params.id, user: req.user.id });
@@ -111,9 +101,6 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE api/advanced-health/:id
-// @desc    Delete advanced health entry
-// @access  Private
 router.delete('/:id', auth, async (req, res) => {
   try {
     const entry = await AdvancedHealth.findOne({ _id: req.params.id, user: req.user.id });
@@ -132,9 +119,6 @@ router.delete('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/advanced-health/stats/summary
-// @desc    Get summary statistics for advanced health
-// @access  Private
 router.get('/stats/summary', auth, async (req, res) => {
   try {
     const { startDate, endDate } = req.query;

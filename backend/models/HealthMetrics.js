@@ -41,11 +41,9 @@ const HealthMetricsSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Virtual for BMI calculation
 HealthMetricsSchema.virtual('bmi').get(function() {
   if (!this.weight || !this.user.height) return null;
-  // BMI = weight(kg) / height(m)²
-  const heightInMeters = this.user.height / 100; // Convert cm to m
+  const heightInMeters = this.user.height / 100; 
   return (this.weight / (heightInMeters * heightInMeters)).toFixed(1);
 });
 

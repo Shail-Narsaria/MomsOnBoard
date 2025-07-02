@@ -6,9 +6,6 @@ const { check, validationResult } = require('express-validator');
 const auth = require('../middleware/auth');
 const User = require('../models/User');
 
-// @route   POST api/auth/register
-// @desc    Register a user
-// @access  Public
 router.post(
   '/register',
   [
@@ -31,7 +28,6 @@ router.post(
         return res.status(400).json({ message: 'User already exists' });
       }
 
-      // Create new user instance
       user = new User({
         firstName,
         lastName,
@@ -41,7 +37,6 @@ router.post(
         pregnancyStartDate
       });
 
-      // Save user (password will be hashed by the pre-save hook)
       await user.save();
 
       const payload = {
@@ -142,9 +137,6 @@ router.post(
   }
 );
 
-// @route   GET api/auth/user
-// @desc    Get logged in user
-// @access  Private
 router.get('/user', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');
@@ -154,9 +146,6 @@ router.get('/user', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/auth/profile
-// @desc    Update user profile
-// @access  Private
 router.put('/profile', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id);

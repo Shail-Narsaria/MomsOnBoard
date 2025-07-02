@@ -4,9 +4,6 @@ const auth = require('../middleware/auth');
 const HealthMetrics = require('../models/HealthMetrics');
 const { check, validationResult } = require('express-validator');
 
-// @route   POST api/health-metrics
-// @desc    Create a new health metrics entry
-// @access  Private
 router.post('/', [
   auth,
   [
@@ -50,9 +47,6 @@ router.post('/', [
   }
 });
 
-// @route   GET api/health-metrics
-// @desc    Get all health metrics entries for a user
-// @access  Private
 router.get('/', auth, async (req, res) => {
   try {
     const healthMetrics = await HealthMetrics.find({ user: req.user.id }).sort({ date: -1 });
@@ -62,9 +56,6 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/health-metrics/:id
-// @desc    Get health metrics entry by ID
-// @access  Private
 router.get('/:id', auth, async (req, res) => {
   try {
     const healthMetrics = await HealthMetrics.findById(req.params.id);
@@ -72,8 +63,6 @@ router.get('/:id', auth, async (req, res) => {
     if (!healthMetrics) {
       return res.status(404).json({ message: 'Health metrics entry not found' });
     }
-
-    // Make sure user owns health metrics entry
     if (healthMetrics.user.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized' });
     }
@@ -87,9 +76,6 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/health-metrics/:id
-// @desc    Update health metrics entry
-// @access  Private
 router.put('/:id', auth, async (req, res) => {
   try {
     const healthMetrics = await HealthMetrics.findById(req.params.id);
@@ -98,7 +84,6 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Health metrics entry not found' });
     }
 
-    // Make sure user owns health metrics entry
     if (healthMetrics.user.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized' });
     }
@@ -113,7 +98,6 @@ router.put('/:id', auth, async (req, res) => {
       notes
     } = req.body;
 
-    // Build health metrics object
     const healthMetricsFields = {};
     if (date) healthMetricsFields.date = date;
     if (weight) healthMetricsFields.weight = weight;
@@ -138,9 +122,6 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE api/health-metrics/:id
-// @desc    Delete health metrics entry
-// @access  Private
 router.delete('/:id', auth, async (req, res) => {
   try {
     const healthMetrics = await HealthMetrics.findById(req.params.id);
@@ -149,7 +130,6 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Health metrics entry not found' });
     }
 
-    // Make sure user owns health metrics entry
     if (healthMetrics.user.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized' });
     }

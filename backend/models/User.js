@@ -64,7 +64,6 @@ const userSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Hash password before saving
 userSchema.pre('save', async function(next) {
     try {
         if (!this.isModified('password')) return next();
@@ -77,7 +76,6 @@ userSchema.pre('save', async function(next) {
     }
 });
 
-// Method to check password
 userSchema.methods.comparePassword = async function(candidatePassword) {
     try {
         const isMatch = await bcrypt.compare(candidatePassword, this.password);
@@ -87,7 +85,6 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
     }
 };
 
-// Method to calculate current pregnancy week
 userSchema.methods.getCurrentPregnancyWeek = function() {
     const today = new Date();
     const pregnancyStart = new Date(this.pregnancyStartDate);

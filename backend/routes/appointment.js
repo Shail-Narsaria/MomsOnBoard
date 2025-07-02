@@ -4,9 +4,6 @@ const auth = require('../middleware/auth');
 const Appointment = require('../models/Appointment');
 const { check, validationResult } = require('express-validator');
 
-// @route   POST api/appointments
-// @desc    Create a new appointment
-// @access  Private
 router.post('/', [
   auth,
   [
@@ -43,9 +40,6 @@ router.post('/', [
   }
 });
 
-// @route   GET api/appointments
-// @desc    Get all appointments for a user
-// @access  Private
 router.get('/', auth, async (req, res) => {
   try {
     const appointments = await Appointment.find({ user: req.user.id }).sort({ date: 1, time: 1 });
@@ -55,9 +49,6 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route   GET api/appointments/:id
-// @desc    Get appointment by ID
-// @access  Private
 router.get('/:id', auth, async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id);
@@ -66,7 +57,6 @@ router.get('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
-    // Make sure user owns appointment
     if (appointment.user.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized' });
     }
@@ -80,9 +70,6 @@ router.get('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   PUT api/appointments/:id
-// @desc    Update appointment
-// @access  Private
 router.put('/:id', auth, async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id);
@@ -91,14 +78,12 @@ router.put('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
-    // Make sure user owns appointment
     if (appointment.user.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized' });
     }
 
     const { title, date, time, type, doctorName, location, notes, reminder, status } = req.body;
 
-    // Build appointment object
     const appointmentFields = {};
     if (title) appointmentFields.title = title;
     if (date) appointmentFields.date = date;
@@ -125,9 +110,6 @@ router.put('/:id', auth, async (req, res) => {
   }
 });
 
-// @route   DELETE api/appointments/:id
-// @desc    Delete appointment
-// @access  Private
 router.delete('/:id', auth, async (req, res) => {
   try {
     const appointment = await Appointment.findById(req.params.id);
@@ -136,7 +118,6 @@ router.delete('/:id', auth, async (req, res) => {
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
-    // Make sure user owns appointment
     if (appointment.user.toString() !== req.user.id) {
       return res.status(401).json({ message: 'Not authorized' });
     }

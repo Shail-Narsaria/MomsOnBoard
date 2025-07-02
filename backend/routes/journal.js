@@ -7,7 +7,6 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 
-// Configure multer for file upload
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadDir = path.join(__dirname, '../uploads');
@@ -21,7 +20,6 @@ const storage = multer.diskStorage({
   }
 });
 
-// File filter to only accept images
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith('image/')) {
     cb(null, true);
@@ -38,12 +36,10 @@ const upload = multer({
   fileFilter: fileFilter
 });
 
-// Validation middleware
 const validateJournalEntry = [
   body('title').trim().notEmpty().withMessage('Title is required'),
   body('content').trim().notEmpty().withMessage('Content is required'),
   body('symptoms').optional().custom((value) => {
-    // Handle both string and array formats
     if (typeof value === 'string') {
       try {
         const parsed = JSON.parse(value);
@@ -57,12 +53,8 @@ const validateJournalEntry = [
   body('date').optional().isISO8601().withMessage('Invalid date format')
 ];
 
-// @route   POST /api/journal
-// @desc    Create a new journal entry
-// @access  Private
 router.post('/', auth, upload.array('photos', 10), validateJournalEntry, async (req, res) => {
     try {
-        // Check for validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
@@ -70,13 +62,11 @@ router.post('/', auth, upload.array('photos', 10), validateJournalEntry, async (
 
         const { title, content, symptoms, date } = req.body;
         
-        // Process uploaded photos
         const photos = req.files ? req.files.map(file => ({
             url: `/uploads/${file.filename}`,
             filename: file.filename
         })) : [];
 
-        // Convert symptoms to array if it's a string
         let symptomsArray = [];
         if (typeof symptoms === 'string') {
             try {
@@ -110,9 +100,6 @@ router.post('/', auth, upload.array('photos', 10), validateJournalEntry, async (
     }
 });
 
-// @route   GET /api/journal
-// @desc    Get all journal entries for a user
-// @access  Private
 router.get('/', auth, async (req, res) => {
     try {
         const entries = await Journal.find({ user: req.user.id }).sort({ date: -1 });
@@ -122,9 +109,6 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
-// @route   GET /api/journal/:id
-// @desc    Get a specific journal entry
-// @access  Private
 router.get('/:id', auth, async (req, res) => {
     try {
         const entry = await Journal.findOne({ _id: req.params.id, user: req.user.id });
@@ -137,12 +121,8 @@ router.get('/:id', auth, async (req, res) => {
     }
 });
 
-// @route   PUT /api/journal/:id
-// @desc    Update a journal entry
-// @access  Private
 router.put('/:id', auth, upload.array('photos', 10), validateJournalEntry, async (req, res) => {
     try {
-        // Check for validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ errors: errors.array() });
@@ -154,7 +134,6 @@ router.put('/:id', auth, upload.array('photos', 10), validateJournalEntry, async
             return res.status(404).json({ message: 'Entry not found' });
         }
 
-        // Process new photos if uploaded
         let newPhotos = [];
         if (req.files && req.files.length > 0) {
             newPhotos = req.files.map(file => ({
@@ -163,20 +142,17 @@ router.put('/:id', auth, upload.array('photos', 10), validateJournalEntry, async
             }));
         }
 
-        // Convert symptoms to array if it's a string
         const symptomsArray = typeof req.body.symptoms === 'string' ? 
             JSON.parse(req.body.symptoms) : 
             (Array.isArray(req.body.symptoms) ? req.body.symptoms : entry.symptoms);
 
-        // Update fields if provided
+
         if (req.body.title) entry.title = req.body.title;
         if (req.body.content) entry.content = req.body.content;
         if (req.body.symptoms) entry.symptoms = symptomsArray;
         if (req.body.date) entry.date = new Date(req.body.date);
-        
-        // Update photos
+  
         if (newPhotos.length > 0) {
-            // Delete old photos
             entry.photos.forEach(photo => {
                 const photoPath = path.join(__dirname, '..', photo.url);
                 if (fs.existsSync(photoPath)) {
@@ -199,9 +175,7 @@ router.put('/:id', auth, upload.array('photos', 10), validateJournalEntry, async
     }
 });
 
-// @route   DELETE /api/journal/:id
-// @desc    Delete a journal entry
-// @access  Private
+
 router.delete('/:id', auth, async (req, res) => {
     try {
         const entry = await Journal.findOne({ _id: req.params.id, user: req.user.id });
@@ -210,7 +184,6 @@ router.delete('/:id', auth, async (req, res) => {
             return res.status(404).json({ message: 'Entry not found' });
         }
 
-        // Delete associated photos if they exist
         if (entry.photos && entry.photos.length > 0) {
             entry.photos.forEach(photo => {
                 const photoPath = path.join(__dirname, '..', photo.url);
