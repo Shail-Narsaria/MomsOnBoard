@@ -111,61 +111,71 @@ function App() {
     <ThemeContext.Provider value={{ mode, toggleColorMode }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route
-              path="/dashboard"
-              element={
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route
+            path="/dashboard"
+            element={
+              <Layout>
                 <PrivateRoute>
                   <Dashboard />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/journal"
-              element={
+              </Layout>
+            }
+          />
+          <Route
+            path="/journal"
+            element={
+              <Layout>
                 <PrivateRoute>
                   <Journal />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/appointments"
-              element={
+              </Layout>
+            }
+          />
+          <Route
+            path="/appointments"
+            element={
+              <Layout>
                 <PrivateRoute>
                   <Appointments />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/health-metrics"
-              element={
+              </Layout>
+            }
+          />
+          <Route
+            path="/health-metrics"
+            element={
+              <Layout>
                 <PrivateRoute>
                   <HealthMetrics />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/advanced-health"
-              element={
+              </Layout>
+            }
+          />
+          <Route
+            path="/advanced-health"
+            element={
+              <Layout>
                 <PrivateRoute>
                   <AdvancedHealth />
                 </PrivateRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
+              </Layout>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <Layout>
                 <PrivateRoute>
                   <Profile />
                 </PrivateRoute>
-              }
-            />
-          </Routes>
-        </Layout>
+              </Layout>
+            }
+          />
+        </Routes>
       </ThemeProvider>
     </ThemeContext.Provider>
   );

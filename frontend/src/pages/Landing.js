@@ -1,5 +1,5 @@
 import './Landing.css';
-// NOTE: This page does not include a StickyNavbar. Do NOT wrap this page with Layout.js to avoid duplicate navbars.
+// NOTE: This page includes its own LandingNavbar component.
 // To use your own images in the slider, place them in frontend/public/slider-images/ and update the image paths in the features array below.
 // To use an image in the About Us section, place it in frontend/public/about-image.jpg and update the src below if you use a different name.
 import React, { useState, useEffect } from 'react';
@@ -13,13 +13,15 @@ import {
   Grid,
   useMediaQuery,
   useTheme,
-  Divider
+  Divider,
+  Toolbar
 } from '@mui/material';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LandingNavbar from '../components/LandingNavbar';
 
 const features = [
   {
@@ -176,7 +178,7 @@ const FinalSection = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   return (
-    <Box className="final-section" sx={{ width: '100vw', minHeight: '60vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column', p: 0, m: 0 }}>
+    <Box className="final-section" sx={{ width: '100%', minHeight: '60vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column', p: 0, m: 0 }}>
       {/* Top half: Quote */}
       <Box className="final-quote" sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
         <Container maxWidth="md">
@@ -262,7 +264,9 @@ const FinalSection = () => {
 
 const Landing = () => {
   return (
-    <Box sx={{ p: 0, m: 0, width: '100vw', minHeight: '100vh', overflowX: 'hidden', boxSizing: 'border-box' }}>
+    <Box sx={{ p: 0, m: 0, width: '100%', minHeight: '100vh', overflowX: 'hidden', boxSizing: 'border-box' }}>
+      <LandingNavbar />
+      <Toolbar /> {/* This adds spacing below the fixed navbar */}
       <FeatureSlider />
       <AboutSection />
       <FinalSection />
