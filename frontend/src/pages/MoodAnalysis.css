@@ -1,0 +1,76 @@
+/* Mood Analysis Page Styles */
+
+.mood-analysis-container {
+  padding: 24px;
+}
+
+.mood-card {
+  height: 100%;
+  transition: transform 0.2s ease-in-out;
+}
+
+.mood-card:hover {
+  transform: translateY(-2px);
+}
+
+.mood-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+}
+
+.mood-chart {
+  min-height: 300px;
+}
+
+.mood-suggestion-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mood-suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.mood-entry-card {
+  border-left: 4px solid;
+  transition: all 0.2s ease-in-out;
+}
+
+.mood-entry-card:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .mood-analysis-container {
+    padding: 16px;
+  }
+  
+  .mood-chart {
+    min-height: 250px;
+  }
+}
+
+@media (max-width: 600px) {
+  .mood-analysis-container {
+    padding: 12px;
+  }
+  
+  .mood-chart {
+    min-height: 200px;
+  }
+  
+  .mood-icon {
+    font-size: 32px;
+  }
+}
+
+/* Dark mode adjustments */
+[data-mui-color-scheme="dark"] .mood-suggestion-item {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+[data-mui-color-scheme="dark"] .mood-entry-card:hover {
+  box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+} 

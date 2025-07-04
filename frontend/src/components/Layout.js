@@ -29,6 +29,7 @@ import {
   Brightness4,
   Brightness7,
   MonitorHeart,
+  Psychology,
 } from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import { logout } from '../redux/slices/authSlice';
@@ -69,6 +70,7 @@ const Layout = ({ children }) => {
     { text: 'Health Metrics', icon: <LocalHospital />, path: '/health-metrics' },
     { text: 'Advanced Health', icon: <MonitorHeart />, path: '/advanced-health' },
     { text: 'Journal', icon: <Book />, path: '/journal' },
+    { text: 'Mood Analysis', icon: <Psychology />, path: '/mood-analysis' },
     { text: 'Appointments', icon: <CalendarToday />, path: '/appointments' },
   ];
 

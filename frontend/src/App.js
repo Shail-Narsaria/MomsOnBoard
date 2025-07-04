@@ -13,6 +13,7 @@ import Journal from './pages/Journal';
 import Appointments from './pages/Appointments';
 import HealthMetrics from './pages/HealthMetrics';
 import AdvancedHealth from './pages/AdvancedHealth';
+import MoodAnalysis from './pages/MoodAnalysis';
 import Profile from './pages/Profile';
 import { checkAuth } from './redux/slices/authSlice';
 import { ThemeContext } from './context/ThemeContext';
@@ -155,26 +156,36 @@ function App() {
               </Layout>
             }
           />
-          <Route
-            path="/advanced-health"
-            element={
-              <Layout>
-                <PrivateRoute>
-                  <AdvancedHealth />
-                </PrivateRoute>
-              </Layout>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <Layout>
-                <PrivateRoute>
-                  <Profile />
-                </PrivateRoute>
-              </Layout>
-            }
-          />
+                      <Route
+              path="/advanced-health"
+              element={
+                <Layout>
+                  <PrivateRoute>
+                    <AdvancedHealth />
+                  </PrivateRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/mood-analysis"
+              element={
+                <Layout>
+                  <PrivateRoute>
+                    <MoodAnalysis />
+                  </PrivateRoute>
+                </Layout>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <Layout>
+                  <PrivateRoute>
+                    <Profile />
+                  </PrivateRoute>
+                </Layout>
+              }
+            />
         </Routes>
       </ThemeProvider>
     </ThemeContext.Provider>
